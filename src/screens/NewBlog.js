@@ -71,7 +71,7 @@ class PostBlog extends React.Component {
                 },
                 body: newBlog
             })
-            this.props.navigation.navigate("Blogs")
+            this.props.navigation.navigate("Blogs", { message: "Successfully Posted Blog", type: "success", title: "" })
         })
         
     }
