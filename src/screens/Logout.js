@@ -3,7 +3,9 @@ import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 
 class Logout extends React.Component {
-  componentDidMount() {
+  componentDidMount() {}
+
+  render() {
     const { navigation } = this.props;
 
     SecureStore.deleteItemAsync("blogger101_Email").then(() => {
@@ -13,9 +15,6 @@ class Logout extends React.Component {
         });
       });
     });
-  }
-
-  render() {
     return null;
   }
 }

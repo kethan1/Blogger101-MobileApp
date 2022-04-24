@@ -18,10 +18,6 @@ class Blog_Info extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.refreshBlogComments();
-  }
-
   refreshBlogComments() {
     fetch(
       `https://blogger-101.herokuapp.com/api/v1/blog-comments/${this.props.route.params.blog_info.title}`,
@@ -118,6 +114,7 @@ class Blog_Info extends React.Component {
   }
 
   componentDidMount() {
+    this.refreshBlogComments();
     SecureStore.getItemAsync("blogger101_Username").then((username) => {
       if (username === null) {
         this.setState({ toDisplayUserLoggedIn: "User Not Logged In" });

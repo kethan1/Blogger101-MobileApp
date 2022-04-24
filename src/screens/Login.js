@@ -8,7 +8,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { Input, Header } from "react-native-elements";
-import { Button, Snackbar } from "@react-native-material/core";
+import { Button, Snackbar } from "react-native-paper";
 import styles from "../styles/stylesheet_main.js";
 
 class Login extends React.Component {
@@ -69,10 +69,7 @@ class Login extends React.Component {
     let snackbar = null;
     if (this.state.snackbar_message !== "") {
       snackbar = (
-        <Snackbar
-          message={this.state.snackbar_message}
-          style={{ position: "absolute", start: 16, end: 16, bottom: 16 }}
-        />
+        <Snackbar visible={true}>{this.state.snackbar_message}</Snackbar>
       );
     }
 
@@ -125,12 +122,12 @@ class Login extends React.Component {
 
               <View style={{ marginTop: 1 }}>
                 <Button
-                  raised
-                  primary
-                  text="Submit"
+                  mode="contained"
+                  color="#2196f3"
                   onPress={() => this.check_user()}
-                />
-                <Button title="Submit" color="#2196f3" tintColor="white" />
+                >
+                  Submit
+                </Button>
               </View>
             </KeyboardAvoidingView>
           </View>

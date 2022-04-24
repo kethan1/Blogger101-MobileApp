@@ -10,7 +10,7 @@ import { Header, Card } from "react-native-elements";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Entypo, Feather } from "@expo/vector-icons";
 import * as SecureStore from "expo-secure-store";
-import { Snackbar } from "@react-native-material/core";
+import { Snackbar } from "react-native-paper";
 import styles from "../styles/stylesheet_main.js";
 
 class Blogs extends React.Component {
@@ -52,10 +52,7 @@ class Blogs extends React.Component {
     let snackbar = null;
     if (route.params.message !== "") {
       snackbar = (
-        <Snackbar
-          message={route.params.message}
-          style={{ position: "absolute", start: 16, end: 16, bottom: 16 }}
-        />
+        <Snackbar visible={true}>{this.state.snackbar_message}</Snackbar>
       );
     }
 

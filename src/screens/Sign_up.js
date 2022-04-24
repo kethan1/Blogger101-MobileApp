@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, Text, Dimensions, KeyboardAvoidingView } from "react-native";
-import { Button, Snackbar } from "@react-native-material/core";
+import { Button, Snackbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import { Header, Input } from "react-native-elements";
@@ -81,10 +81,7 @@ class Sign_Up extends React.Component {
     let snackbar = null;
     if (this.state.snackbar_message !== "") {
       snackbar = (
-        <Snackbar
-          message={this.state.snackbar_message}
-          style={{ position: "absolute", start: 16, end: 16, bottom: 16 }}
-        />
+        <Snackbar visible={true}>{this.state.snackbar_message}</Snackbar>
       );
     }
     return (
@@ -181,11 +178,12 @@ class Sign_Up extends React.Component {
 
                 <View style={{ marginTop: 1 }}>
                   <Button
-                    title="Submit"
                     color="#2196f3"
                     tintColor="white"
                     onPress={() => this.check_user()}
-                  />
+                  >
+                    Submit
+                  </Button>
                 </View>
               </KeyboardAvoidingView>
             </View>

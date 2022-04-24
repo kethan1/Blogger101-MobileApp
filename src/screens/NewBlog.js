@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, Text, Dimensions } from "react-native";
-import { Button } from "@react-native-material/core";
+import { Button } from "react-native-paper";
 import { Header, Input } from "react-native-elements";
 import { Entypo, Feather } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
@@ -97,18 +97,16 @@ class PostBlog extends React.Component {
             </Markdown>
           </View>
           <Button
-            title="Select Image"
             color="#2196f3"
             tintColor="white"
             onPress={this._pickDocument}
-          />
+          >
+            Select Image
+          </Button>
           <Text>{"\n"}</Text>
-          <Button
-            title="Post Blog"
-            color="#2196f3"
-            tintColor="white"
-            onPress={this._postBlog}
-          />
+          <Button color="#2196f3" tintColor="white" onPress={this._postBlog}>
+            Post Blog
+          </Button>
         </View>
       </View>
     );
