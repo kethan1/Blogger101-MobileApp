@@ -5,7 +5,9 @@ import { Header, Input } from "react-native-elements";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import Markdown, { MarkdownIt } from "react-native-markdown-display";
-import styles from "../styles/stylesheet_main.js";
+import styles from "../styles/stylesheet_main";
+import CONSTANTS from "../Constants";
+
 
 class Blog_Info extends React.Component {
   constructor() {
@@ -20,7 +22,7 @@ class Blog_Info extends React.Component {
 
   refreshBlogComments() {
     fetch(
-      `https://blogger-101.herokuapp.com/api/v1/blog-comments/${this.props.route.params.blog_info.title}`,
+      `${CONSTANTS.SERVER_URL}/api/v1/blog-comments/${this.props.route.params.blog_info.title}`,
       {
         mode: "cors",
         cache: "no-cache",
@@ -45,7 +47,7 @@ class Blog_Info extends React.Component {
         alert("Please Login to Post a Blog");
       } else {
         if (this.state.isSubPost[0] === false) {
-          fetch("https://blogger-101.herokuapp.com/api/v1/add-comment", {
+          fetch(`${CONSTANTS.SERVER_URL}/api/v1/add-comment`, {
             method: "POST",
             mode: "cors",
             cache: "no-cache",
@@ -60,7 +62,7 @@ class Blog_Info extends React.Component {
             }),
           });
         } else {
-          fetch("https://blogger-101.herokuapp.com/api/v1/add-comment", {
+          fetch(`${CONSTANTS.SERVER_URL}/api/v1/add-comment`, {
             method: "POST",
             mode: "cors",
             cache: "no-cache",
@@ -117,7 +119,7 @@ class Blog_Info extends React.Component {
     this.refreshBlogComments();
     SecureStore.getItemAsync("blogger101_Username").then((username) => {
       if (username === null) {
-        this.setState({ toDisplayUserLoggedIn: "User Not Logged In" });
+        this.setState({ toDisplayUserLoggedIn: "Not Logged In" });
       } else {
         this.setState({ toDisplayUserLoggedIn: username });
       }
@@ -138,7 +140,7 @@ class Blog_Info extends React.Component {
             <Entypo name="text-document" size={20} color="black" />
           }
           rightComponent={
-            <View style={[styles.oneLineView]}>
+            <View style={[styles.inlineView]}>
               <Text>
                 <Feather name="user" size={18} color="black" />
                 User Logged In: {this.state.toDisplayUserLoggedIn}

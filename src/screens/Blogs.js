@@ -5,41 +5,43 @@ import {
   FlatList,
   Dimensions,
   TouchableOpacity,
+  Image
 } from "react-native";
-import { Header, Card } from "react-native-elements";
+import CONSTANTS from "../Constants";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { Entypo, Feather } from "@expo/vector-icons";
-import * as SecureStore from "expo-secure-store";
-import { Snackbar } from "react-native-paper";
-import styles from "../styles/stylesheet_main.js";
+import { Feather } from "@expo/vector-icons";
+import { Snackbar, Card, Title } from "react-native-paper";
+import styles from "../styles/stylesheet_main";
+import { getGlobalState, setGlobalState } from "../GlobalState";
 
 class Blogs extends React.Component {
   constructor() {
     super();
     this.state = {
       entries: [],
-      ScreenHeight: Dimensions.get("window").height,
+      screenHeight: Dimensions.get("window").height,
+      screenWidth: Dimensions.get("window").width,
+      snackbarMessage: "",
     };
   }
 
   componentDidMount() {
-    fetch("https://blogger-101.herokuapp.com/api/v1/blogs").then(
+    fetch(`${CONSTANTS.SERVER_URL}/api/v1/blogs`).then(
       async (response) => {
         var responseInJson = await response.json();
         this.setState({ entries: responseInJson });
       }
     );
-    SecureStore.getItemAsync("blogger101_Username").then((username) => {
-      if (username === null) {
-        this.setState({ toDisplayUserLoggedIn: "User Not Logged In" });
-      } else {
-        this.setState({ toDisplayUserLoggedIn: username });
-      }
-    });
+    this.props.navigation.setOptions({ headerRight: (props) => (
+      <Text style={{ fontSize: 16 }}>
+        <Feather name="user" size={24} color="black" />
+        User: {getGlobalState("username")}
+      </Text>
+    )});
   }
 
   refresh_blogs() {
-    fetch("https://blogger-101.herokuapp.com/api/v1/blogs").then(
+    fetch(`${CONSTANTS.SERVER_URL}/api/v1/blogs`).then(
       async (response) => {
         var responseInJson = await response.json();
         this.setState({ entries: responseInJson });
@@ -49,35 +51,23 @@ class Blogs extends React.Component {
 
   render() {
     const { route } = this.props;
+
+    if (route.params.message) {
+        this.state.snackbarMessage = route.params.message || "";
+        route.params.message = "";
+    }
     let snackbar = null;
-    if (route.params.message !== "") {
+    if (this.state.snackbarMessage !== "") {
       snackbar = (
-        <Snackbar visible={true}>{this.state.snackbar_message}</Snackbar>
+        <Snackbar visible={true} onDismiss={() => this.setState({snackbarMessage: ""})} style={{ marginBottom: 50, color: "black" }}>{this.state.snackbarMessage}</Snackbar>
       );
     }
 
     return (
       <View>
         {snackbar}
-        <Header
-          style={[styles.header]}
-          backgroundColor="white"
-          placement="left"
-          centerComponent={{ text: "Blogs" }}
-          leftComponent={
-            <Entypo name="text-document" size={20} color="black" />
-          }
-          rightComponent={
-            <View style={[styles.oneLineView]}>
-              <Text>
-                <Feather name="user" size={18} color="black" />
-                User Logged In: {this.state.toDisplayUserLoggedIn}
-              </Text>
-            </View>
-          }
-        />
 
-        <View style={{ height: this.state.ScreenHeight - 100 }}>
+        <View style={{ height: this.state.screenHeight - 100 }}>
           <Text
             style={{ marginRight: 5, textAlign: "right", fontSize: 15 }}
             onPress={() => this.refresh_blogs()}
@@ -113,15 +103,14 @@ class Blogs extends React.Component {
                     }
                   >
                     <Card style={{ width: "100%" }}>
-                      <Card.Title>{item.title}</Card.Title>
-                      <Card.Divider />
-                      <Card.Image
-                        style={{ width: "100%" }}
-                        source={{ uri: item.image }}
-                        resizeMode="center"
-                      />
+                      <Card.Content>
+                        <Title>{item.title}</Title>
+                        <Image source={{ uri: item.image }} style={{ width: this.state.screenWidth - 10, flex: 1, height: null }} />
+                      </Card.Content>
+                      
                     </Card>
                   </TouchableOpacity>
+                  <Text style={{ fontSize: 15 }}>{"\n"}</Text>
                 </View>
               )}
               keyExtractor={(item) => item.link}
@@ -133,7 +122,7 @@ class Blogs extends React.Component {
   }
 }
 
-export default function (props) {
+export default function(props) {
   const route = useRoute();
   const navigation = useNavigation();
   return <Blogs route={route} navigation={navigation} />;

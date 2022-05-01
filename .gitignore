@@ -1,7 +1,8 @@
-.expo/*
-.expo-shared/README.md
-node_modules/**/*
-
+.vscode
+node_modules/
+.expo/
+dist/
+npm-debug.*
 *.jks
 *.p8
 *.p12
@@ -9,22 +10,6 @@ node_modules/**/*
 *.mobileprovision
 *.orig.*
 web-build/
-*.apk
-*.aab
-
-# Debug and Error Logs
-logs
-npm_debug.*
-npm_debug.log*
-yarn-error.log*
-yarn-debug.log*
-debug.log
-
-# Cache Directories
-.npm
-.eslintcache
 
 # macOS
 .DS_Store
-.AppleDouble
-.LSOverride

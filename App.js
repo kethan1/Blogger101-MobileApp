@@ -9,12 +9,14 @@ import { StatusBar } from "expo-status-bar";
 import AppLoading from "expo-app-loading";
 import * as SecureStore from "expo-secure-store";
 
-import Blogs from "./src/screens/Blogs.js";
-import Blog_Info from "./src/screens/DetailsScreen.js";
-import Login from "./src/screens/Login.js";
-import Sign_Up from "./src/screens/Sign_up.js";
-import Logout from "./src/screens/Logout.js";
-import PostBlog from "./src/screens/NewBlog.js";
+import Blogs from "./src/screens/Blogs";
+import Blog_Info from "./src/screens/DetailsScreen";
+import Login from "./src/screens/Login";
+import Sign_Up from "./src/screens/Sign_up";
+import Logout from "./src/screens/Logout";
+import PostBlog from "./src/screens/NewBlog";
+
+import { getGlobalState, setGlobalState } from "./src/GlobalState";
 
 const Tab = createBottomTabNavigator();
 
@@ -29,6 +31,11 @@ export default function App() {
 
   async function getUserData() {
     const username = await SecureStore.getItemAsync("blogger101_Username");
+    const password = await SecureStore.getItemAsync("blogger101_Password");
+    const email = await SecureStore.getItemAsync("blogger101_Email");
+    setGlobalState("username", username);
+    setGlobalState("password", password);
+    setGlobalState("email", email);
     if (username === null) {
       setIsSignedIn(false);
     } else {
@@ -44,17 +51,20 @@ export default function App() {
         onError={console.warn}
       />
     );
+  } else {
+    if (getGlobalState("username") === null && isSignedIn !== false) {
+      setIsSignedIn(false);
+    } else if (getGlobalState("username") !== null && isSignedIn !== true) {
+      setIsSignedIn(true);
+    }
   }
 
   return (
     <NavigationContainer>
       <Tab.Navigator
-        independent={true}
         screenOptions={({ route }) => ({
           tabBarButton: [
             "Details",
-            isSignedIn ? "Login" : "Post_Blog",
-            // isSignedIn ? "Sign_Up": "Logout",
           ].includes(route.name)
             ? () => {
                 return null;
@@ -75,21 +85,81 @@ export default function App() {
               );
             }
           },
+          tabBarActiveTintColor: "tomato",
+          tabBarInactiveTintColor: "gray",
         })}
-        tabBarOptions={{
-          activeTintColor: "tomato",
-          inactiveTintColor: "gray",
-        }}
       >
         <Tab.Screen
           name="Blogs"
           component={Blogs}
           initialParams={{ message: "" }}
+          options={{
+            headerLeft: (props) => (
+              <Entypo name="text-document" size={26} color="black" />
+            ),
+            headerRight: (props) => (
+              <Text style={{ fontSize: 16 }}>
+                <Feather name="user" size={24} color="black" />
+                User: {getGlobalState("username")}
+              </Text>
+            ),
+            headerLeftContainerStyle: { paddingLeft: 10 },
+            headerRightContainerStyle: { paddingRight: 10 },
+          }}
         />
-        <Tab.Screen name="Post_Blog" component={PostBlog} />
-        <Tab.Screen name="Sign_Up" component={Sign_Up} />
-        <Tab.Screen name="Login" component={Login} />
-        <Tab.Screen name="Logout" component={Logout} />
+  
+        {isSignedIn ? (
+          <Tab.Screen
+            name="Post_Blog"
+            component={PostBlog}
+            options={{
+              headerLeft: (props) => (
+                <Entypo name="new-message" size={26} color="black" />
+              ),
+              headerRight: (props) => (
+                <Text style={{ fontSize: 16 }}>
+                  <Feather name="user" size={24} color="black" />
+                  User: {getGlobalState("username")}
+                </Text>
+              ),
+              headerLeftContainerStyle: { paddingLeft: 10 },
+              headerRightContainerStyle: { paddingRight: 10 },
+            }}
+          />
+        ) : <Tab.Screen
+            name="Sign_Up"
+            component={Sign_Up}
+            options={{
+              headerLeft: (props) => (
+                <Feather name="user-plus" size={20} color="black" />
+              ),
+              headerRight: (props) => (
+                <Text style={{ fontSize: 16 }}>
+                  <Feather name="user" size={24} color="black" />
+                  User: {getGlobalState("username")}
+                </Text>
+              ),
+              headerLeftContainerStyle: { paddingLeft: 10 },
+              headerRightContainerStyle: { paddingRight: 10 },
+            }}
+          />
+        }
+
+        {isSignedIn ? (
+          <Tab.Screen name="Logout" component={Logout} />
+        ) : <Tab.Screen
+            name="Login"
+            component={Login}
+            options={{
+              headerLeft: (props) => (
+                <SimpleLineIcons name="login" size={26} color="black" />
+              ),
+              headerLeftContainerStyle: { paddingLeft: 10 },
+              headerRightContainerStyle: { paddingRight: 10 },
+            }}
+          />
+        }
+        
         <Tab.Screen name="Details" component={Blog_Info} />
       </Tab.Navigator>
       <StatusBar style="dark" />

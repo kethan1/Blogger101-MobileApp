@@ -7,7 +7,9 @@ import * as DocumentPicker from "expo-document-picker";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import Markdown from "react-native-markdown-display";
-import styles from "../styles/stylesheet_main.js";
+import styles from "../styles/stylesheet_main";
+import CONSTANTS from "../Constants";
+
 
 class PostBlog extends React.Component {
   constructor(props) {
@@ -21,12 +23,28 @@ class PostBlog extends React.Component {
     };
   }
 
-  async _pickDocument() {
+  componentDidMount() {
+    SecureStore.getItemAsync("blogger101_Username").then((username) => {
+      if (username === null) {
+        this.setState({ toDisplayUserLoggedIn: "Not Logged In" });
+      } else {
+        this.setState({ toDisplayUserLoggedIn: username });
+      }
+    });
+    this.props.navigation.setOptions({ headerRight: (props) => (
+        <Text style={{ fontSize: 16 }}>
+          <Feather name="user" size={24} color="black" />
+          User: {this.state.toDisplayUserLoggedIn}
+        </Text>
+    )});
+  }
+
+  async pickDocument() {
     let result = await DocumentPicker.getDocumentAsync({});
     this.setState({ uploadedFile: result });
   }
 
-  async _postBlog() {
+  async postBlog() {
     SecureStore.getItemAsync("blogger101_Username").then((username) => {
       var newBlog = new FormData();
       newBlog.append("blog_title", this.state.blog_title);
@@ -42,7 +60,7 @@ class PostBlog extends React.Component {
         name: `image123123.${fileType}`,
       });
 
-      fetch("https://blogger-101.herokuapp.com/api/v1/post-blog", {
+      fetch(`${CONSTANTS.SERVER_URL}/api/v1/post-blog`, {
         method: "POST",
         headers: {
           "Content-Type": "multipart/form-data",
@@ -58,22 +76,6 @@ class PostBlog extends React.Component {
   render() {
     return (
       <View>
-        <Header
-          style={[styles.header]}
-          backgroundColor="white"
-          placement="left"
-          centerComponent={{ text: "Post A Blog" }}
-          leftComponent={<Entypo name="new-message" size={20} color="black" />}
-          rightComponent={
-            <View style={[styles.oneLineView]}>
-              <Text>
-                <Feather name="user" size={18} color="black" />
-                User Logged In: {this.state.toDisplayUserLoggedIn}
-              </Text>
-            </View>
-          }
-        />
-
         <View style={{ height: this.state.ScreenHeight - 100 }}>
           <Text>{"\n\n"}</Text>
           <Input
@@ -99,12 +101,12 @@ class PostBlog extends React.Component {
           <Button
             color="#2196f3"
             tintColor="white"
-            onPress={this._pickDocument}
+            onPress={this.pickDocument}
           >
             Select Image
           </Button>
           <Text>{"\n"}</Text>
-          <Button color="#2196f3" tintColor="white" onPress={this._postBlog}>
+          <Button color="#2196f3" tintColor="white" onPress={this.postBlog}>
             Post Blog
           </Button>
         </View>

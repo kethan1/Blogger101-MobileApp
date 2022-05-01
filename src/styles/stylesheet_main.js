@@ -17,7 +17,7 @@ export default StyleSheet.create({
     shadowColor: "black",
     shadowOpacity: 1.0,
   },
-  oneLineView: {
+  inlineView: {
     flexDirection: "row",
     alignItems: "center",
   },
