@@ -1,9 +1,12 @@
 import * as React from "react";
-import { View, Text, Dimensions, KeyboardAvoidingView } from "react-native";
 import {
-  MaterialCommunityIcons,
-  Feather,
-} from "@expo/vector-icons";
+  View,
+  Text,
+  Dimensions,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { Button, Snackbar, TextInput, HelperText } from "react-native-paper";
@@ -23,16 +26,19 @@ class Login extends React.Component {
       password: "",
       snackbarMessage: "",
       emailInputError: false,
+      showPassword: false,
     };
   }
 
   componentDidMount() {
-    this.props.navigation.setOptions({ headerRight: (props) => (
-      <Text style={{ fontSize: 16 }}>
-        <Feather name="user" size={24} color="black" />
-        User: {getGlobalState("username")}
-      </Text>
-    )});
+    this.props.navigation.setOptions({
+      headerRight: (props) => (
+        <Text style={{ fontSize: 16 }}>
+          <Feather name="user" size={24} color="black" />
+          User: {getGlobalState("username")}
+        </Text>
+      ),
+    });
   }
 
   check_user() {
@@ -57,13 +63,17 @@ class Login extends React.Component {
         setGlobalState("username", data.user.username);
         setGlobalState("password", this.state.password);
         await SecureStore.setItemAsync("blogger101_Email", this.state.email);
-        await SecureStore.setItemAsync("blogger101_Username", data.user.username);
+        await SecureStore.setItemAsync(
+          "blogger101_Username",
+          data.user.username
+        );
         await SecureStore.setItemAsync(
           "blogger101_Password",
           this.state.password
         );
-        this.props.navigation.navigate("Blogs", {
-          message: "Logged In Successfully",
+        this.props.navigation.navigate("LoggedIn", {
+          screen: "Blogs",
+          params: { message: "Successfully Logged In" },
         });
       } else {
         this.setState({
@@ -76,7 +86,7 @@ class Login extends React.Component {
   validateEmail(email) {
     let error = EMAIL_VERIFICATION_RE.test(email) || email === "";
     if (this.state.emailInputError !== !error) {
-      this.setState({emailInputError: !error});
+      this.setState({ emailInputError: !error });
     }
   }
 
@@ -84,7 +94,13 @@ class Login extends React.Component {
     let snackbar = null;
     if (this.state.snackbarMessage !== "") {
       snackbar = (
-        <Snackbar visible={true} onDismiss={() => this.setState({snackbarMessage: ""})} style={{ marginBottom: 50, color: "black" }}>{this.state.snackbarMessage}</Snackbar>
+        <Snackbar
+          visible={true}
+          onDismiss={() => this.setState({ snackbarMessage: "" })}
+          style={{ marginBottom: 50, color: "black" }}
+        >
+          {this.state.snackbarMessage}
+        </Snackbar>
       );
     }
 
@@ -102,17 +118,21 @@ class Login extends React.Component {
               <TextInput
                 label="Email"
                 value={this.state.email}
-                onChangeText={text => {
-                  this.setState({email: text});
+                onChangeText={(text) => {
+                  this.setState({ email: text });
                   this.validateEmail(text);
                 }}
-                right={<MaterialCommunityIcons
-                  name="email-outline"
-                  size={24}
-                  color="black"
-                />}
-                activeOutlineColor={this.state.emailInputError ? "#ff1f1f": "#2196f3"}
-                activeUnderlineColor={this.state.emailInputError ? "#ff1f1f": "#2196f3"}
+                left={
+                  <TextInput.Icon
+                    name={() => <Feather name="mail" size={24} color="black" />}
+                  />
+                }
+                activeOutlineColor={
+                  this.state.emailInputError ? "#ff1f1f" : "#2196f3"
+                }
+                activeUnderlineColor={
+                  this.state.emailInputError ? "#ff1f1f" : "#2196f3"
+                }
               />
               <HelperText type="error" visible={this.state.emailInputError}>
                 Email address is invalid!
@@ -122,19 +142,39 @@ class Login extends React.Component {
                 style={{ marginTop: 1, marginBottom: 10 }}
                 label="Password"
                 value={this.state.password}
-                onChangeText={text => this.setState({password: text})}
-                right={<Feather name="lock" size={24} color="black" />}
+                onChangeText={(text) => this.setState({ password: text })}
+                left={
+                  <TextInput.Icon
+                    name={() => <Feather name="lock" size={24} color="black" />}
+                  />
+                }
+                right={
+                  <TextInput.Icon
+                    name={() => (
+                      <TouchableOpacity
+                        onPress={(event) => {
+                          event.stopPropagation();
+                          this.setState({
+                            showPassword: !this.state.showPassword,
+                          });
+                        }}
+                      >
+                        <Feather name="eye" size={24} color="black" />
+                      </TouchableOpacity>
+                    )}
+                  />
+                }
                 activeOutlineColor="#2196f3"
                 activeUnderlineColor="#2196f3"
                 selectionColor="#2196f3"
-                secureTextEntry
+                secureTextEntry={!this.state.showPassword}
               />
 
               <View style={{ marginTop: 1 }}>
                 <Button
                   mode="contained"
                   color="#2196f3"
-                  onPress={() => this.check_user()}
+                  onPress={this.check_user}
                 >
                   Submit
                 </Button>

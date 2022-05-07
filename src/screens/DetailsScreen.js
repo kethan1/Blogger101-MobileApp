@@ -1,28 +1,31 @@
 import * as React from "react";
 import { View, Text, Dimensions, ScrollView } from "react-native";
-import { Entypo, Feather } from "@expo/vector-icons";
-import { Header, Input } from "react-native-elements";
+import { Feather } from "@expo/vector-icons";
+import { TextInput } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import Markdown, { MarkdownIt } from "react-native-markdown-display";
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
 
-
 class Blog_Info extends React.Component {
   constructor() {
     super();
     this.state = {
       blog_comments: [],
-      ScreenHeight: Dimensions.get("window").height,
-      ScreenWidth: Dimensions.get("window").width,
-      isSubPost: [false, null],
+      screenHeight: Dimensions.get("window").height,
+      screenWidth: Dimensions.get("window").width,
+      subPostId: null,
     };
+
+    this.switchCommentType = this.switchCommentType.bind(this);
+    this.postComment = this.postComment.bind(this);
+    this.refreshBlogComments = this.refreshBlogComments.bind(this);
   }
 
   refreshBlogComments() {
     fetch(
-      `${CONSTANTS.SERVER_URL}/api/v1/blog-comments/${this.props.route.params.blog_info.title}`,
+      `${CONSTANTS.SERVER_URL}/api/v1/blog-comments/${this.props.route.params.blogInfo.title}`,
       {
         mode: "cors",
         cache: "no-cache",
@@ -33,20 +36,16 @@ class Blog_Info extends React.Component {
     });
   }
 
-  postCommentChangeType(commentType) {
-    if (commentType === "main") {
-      this.setState({ isSubPost: [false, null] });
-    } else {
-      this.setState({ isSubPost: [true, commentType] });
-    }
+  switchCommentType(commentId = null) {
+    this.setState({ subPostId: commentId });
   }
 
-  post_comment() {
+  postComment() {
     SecureStore.getItemAsync("blogger101_Username").then((username) => {
       if (username === null) {
-        alert("Please Login to Post a Blog");
+        alert("Please Login to Post a Comment");
       } else {
-        if (this.state.isSubPost[0] === false) {
+        if (this.state.subPostId === null) {
           fetch(`${CONSTANTS.SERVER_URL}/api/v1/add-comment`, {
             method: "POST",
             mode: "cors",
@@ -55,9 +54,9 @@ class Blog_Info extends React.Component {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              blog_title: this.props.route.params.blog_info.title,
+              blog_title: this.props.route.params.blogInfo.title,
               type: "main",
-              comment_content: this.state.comment_content,
+              commentContent: this.state.commentContent,
               user: username,
             }),
           });
@@ -70,10 +69,10 @@ class Blog_Info extends React.Component {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              blog_title: this.props.route.params.blog_info.title,
+              blog_title: this.props.route.params.blogInfo.title,
               type: "sub",
-              comment_content: this.state.comment_content,
-              id: this.state.isSubPost[1],
+              commentContent: this.state.commentContent,
+              id: this.state.subPostId,
               user: username,
             }),
           });
@@ -83,16 +82,16 @@ class Blog_Info extends React.Component {
     });
   }
 
-  return_blog_comments_view() {
+  renderBlogComments() {
     var to_return = [];
     for (let comment of this.state.blog_comments) {
-      var comment_text = `${comment["text"]} - ${comment["user"]}`;
-      var comment_id = comment["id"];
+      var commentText = `${comment["text"]} - ${comment["user"]}`;
+      var commentID = comment["id"];
       to_return.push(
         <View>
-          <Markdown style={{ body: { fontSize: 16 } }}>{comment_text}</Markdown>
+          <Markdown style={{ body: { fontSize: 16 } }}>{commentText}</Markdown>
           <Text
-            onPress={() => this.postCommentChangeType(`${comment_id}`)}
+            onPress={() => this.switchCommentType(commentID)}
             style={{ fontSize: 14, color: "blue" }}
           >
             Respond To This Comment
@@ -124,6 +123,9 @@ class Blog_Info extends React.Component {
         this.setState({ toDisplayUserLoggedIn: username });
       }
     });
+    this.props.navigation.setOptions({
+      title: this.props.route.params.blogInfo.title,
+    });
   }
 
   render() {
@@ -131,34 +133,16 @@ class Blog_Info extends React.Component {
 
     return (
       <View>
-        <Header
-          style={[styles.header]}
-          backgroundColor="white"
-          placement="left"
-          centerComponent={{ text: route.params.blog_info.title }}
-          leftComponent={
-            <Entypo name="text-document" size={20} color="black" />
-          }
-          rightComponent={
-            <View style={[styles.inlineView]}>
-              <Text>
-                <Feather name="user" size={18} color="black" />
-                User Logged In: {this.state.toDisplayUserLoggedIn}
-              </Text>
-            </View>
-          }
-        />
-
         <View
           style={{
-            height: this.state.ScreenHeight - 100,
+            height: this.state.screenHeight - 100,
             marginRight: "5%",
             marginLeft: "5%",
             marginTop: "2%",
           }}
         >
           <Text style={{ fontSize: 25, textAlign: "center" }}>
-            {route.params.blog_info.title}
+            {route.params.blogInfo.title}
             {"\n"}
           </Text>
           <View>
@@ -176,19 +160,19 @@ class Blog_Info extends React.Component {
                   style={{ body: { fontSize: 15 }, link: { color: "blue" } }}
                   mergeStyle={true}
                 >
-                  {route.params.blog_info.text}
+                  {route.params.blogInfo.text}
                 </Markdown>
               </View>
               <Text>{"\n"}</Text>
               <Text
-                onPress={() => this.refreshBlogComments()}
+                onPress={this.refreshBlogComments}
                 style={{ marginLeft: "5%" }}
               >
                 <Feather name="refresh-ccw" size={20} color="black" />
                 &nbsp;Refresh Blog Comments
               </Text>
               <Text
-                onPress={() => this.postCommentChangeType("main")}
+                onPress={this.switchCommentType}
                 style={{ fontSize: 15, color: "blue", marginLeft: "5%" }}
               >
                 Respond To This Blog
@@ -198,21 +182,30 @@ class Blog_Info extends React.Component {
               <View
                 style={{
                   marginRight: "5%",
-                  marginLeft: this.state.isSubPost[0] ? "15%" : "5%",
+                  marginLeft: this.state.subPostId !== null ? "15%" : "5%",
                 }}
               >
-                <Input
-                  placeholder="Comment Content"
-                  onChangeText={(c) => {
-                    this.setState({ comment_content: c });
-                  }}
+                <TextInput
+                  label="Comment Content"
+                  value={this.state.commentContent}
+                  onChangeText={(text) => this.setState({ commentContent: text })}
+                  left={
+                    <TextInput.Icon
+                      name={() => (
+                        <Feather name="lock" size={24} color="black" />
+                      )}
+                    />
+                  }
+                  activeOutlineColor="#2196f3"
+                  activeUnderlineColor="#2196f3"
+                  selectionColor="#2196f3"
                   multiline={true}
-                  style={{ width: this.state.ScreenWidth }}
+                  style={{ width: this.state.screenWidth }}
                 />
-                <Text onPress={() => this.post_comment()}>Post Comment</Text>
+                <Text onPress={this.postComment}>Post Comment</Text>
                 <Text>{"\n\n"}</Text>
               </View>
-              {this.return_blog_comments_view()}
+              {this.renderBlogComments()}
             </ScrollView>
           </View>
         </View>

@@ -5,7 +5,7 @@ import {
   FlatList,
   Dimensions,
   TouchableOpacity,
-  Image
+  Image,
 } from "react-native";
 import CONSTANTS from "../Constants";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -19,6 +19,7 @@ class Blogs extends React.Component {
     super();
     this.state = {
       entries: [],
+      sizes: [],
       screenHeight: Dimensions.get("window").height,
       screenWidth: Dimensions.get("window").width,
       snackbarMessage: "",
@@ -26,40 +27,74 @@ class Blogs extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`${CONSTANTS.SERVER_URL}/api/v1/blogs`).then(
-      async (response) => {
-        var responseInJson = await response.json();
-        this.setState({ entries: responseInJson });
-      }
-    );
-    this.props.navigation.setOptions({ headerRight: (props) => (
-      <Text style={{ fontSize: 16 }}>
-        <Feather name="user" size={24} color="black" />
-        User: {getGlobalState("username")}
-      </Text>
-    )});
+    this.refreshBlogs();
+    this.props.navigation.setOptions({
+      headerRight: (props) => (
+        <Text style={{ fontSize: 16 }}>
+          <Feather name="user" size={24} color="black" />
+          User: {getGlobalState("username")}
+        </Text>
+      ),
+    });
   }
 
-  refresh_blogs() {
-    fetch(`${CONSTANTS.SERVER_URL}/api/v1/blogs`).then(
-      async (response) => {
-        var responseInJson = await response.json();
-        this.setState({ entries: responseInJson });
+  refreshBlogs() {
+    fetch(`${CONSTANTS.SERVER_URL}/api/v1/blogs`).then(async (response) => {
+      var responseInJson = await response.json();
+      for (let blog of responseInJson) {
+        this.setState({
+          sizes: {
+            ...this.state.sizes,
+            [blog["image"]]: { width: null, height: null },
+          },
+        });
       }
-    );
+      this.getSizes();
+      this.setState({ entries: responseInJson });
+    });
+  }
+
+  getSizes() {
+    for (let uri of Object.keys(this.state.sizes)) {
+      Image.getSize(
+        uri,
+        (width, height) => {
+          let resizedWidth = this.state.screenWidth - 100;
+          let resizedHeight = (resizedWidth / width) * height;
+          if (resizedHeight > 150) {
+            resizedHeight = 150;
+            resizedWidth = (150 / height) * width;
+          }
+
+          this.setState({
+            sizes: {
+              ...this.state.sizes,
+              [uri]: { width: resizedWidth, height: resizedHeight },
+            },
+          });
+        },
+        (error) => console.error(error.message)
+      );
+    }
   }
 
   render() {
     const { route } = this.props;
 
     if (route.params.message) {
-        this.state.snackbarMessage = route.params.message || "";
-        route.params.message = "";
+      this.state.snackbarMessage = route.params.message || "";
+      route.params.message = "";
     }
     let snackbar = null;
     if (this.state.snackbarMessage !== "") {
       snackbar = (
-        <Snackbar visible={true} onDismiss={() => this.setState({snackbarMessage: ""})} style={{ marginBottom: 50, color: "black" }}>{this.state.snackbarMessage}</Snackbar>
+        <Snackbar
+          visible={true}
+          onDismiss={() => this.setState({ snackbarMessage: "" })}
+          style={{ marginBottom: 50, color: "black" }}
+        >
+          {this.state.snackbarMessage}
+        </Snackbar>
       );
     }
 
@@ -69,23 +104,16 @@ class Blogs extends React.Component {
 
         <View style={{ height: this.state.screenHeight - 100 }}>
           <Text
-            style={{ marginRight: 5, textAlign: "right", fontSize: 15 }}
-            onPress={() => this.refresh_blogs()}
+            style={{
+              marginRight: 5,
+              marginBottom: 20,
+              textAlign: "right",
+              fontSize: 15,
+            }}
+            onPress={this.refreshBlogs}
           >
             <Feather name="refresh-ccw" size={17} color="black" />
             &nbsp;Refresh Blogs
-          </Text>
-
-          <Text
-            style={{
-              marginRight: 5,
-              textAlign: "right",
-              color: "blue",
-              fontSize: 15,
-            }}
-            onPress={() => this.props.navigation.navigate("Post_Blog")}
-          >
-            {"\n"}New Blog
           </Text>
 
           <View style={[styles.container]}>
@@ -95,19 +123,32 @@ class Blogs extends React.Component {
               renderItem={({ item }) => (
                 <View style={{ width: "100%" }}>
                   <TouchableOpacity
-                    style={{ width: "100%" }}
+                    style={{ width: "100%", flex: 1, justifyContent: "center", alignItems: "center" }}
                     onPress={() =>
                       this.props.navigation.navigate("Details", {
-                        blog_info: item,
+                        blogInfo: item,
                       })
                     }
                   >
-                    <Card style={{ width: "100%" }}>
+                    <Card style={{ width: "95%" }}>
                       <Card.Content>
-                        <Title>{item.title}</Title>
-                        <Image source={{ uri: item.image }} style={{ width: this.state.screenWidth - 10, flex: 1, height: null }} />
+                        <View
+                          style={{
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Title>{item.title}</Title>
+                          <Image
+                            source={{ uri: item.image }}
+                            style={{
+                              width: this.state.sizes[item.image].width,
+                              flex: 1,
+                              height: this.state.sizes[item.image].height,
+                            }}
+                          />
+                        </View>
                       </Card.Content>
-                      
                     </Card>
                   </TouchableOpacity>
                   <Text style={{ fontSize: 15 }}>{"\n"}</Text>
@@ -122,7 +163,7 @@ class Blogs extends React.Component {
   }
 }
 
-export default function(props) {
+export default function (props) {
   const route = useRoute();
   const navigation = useNavigation();
   return <Blogs route={route} navigation={navigation} />;

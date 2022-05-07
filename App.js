@@ -1,7 +1,11 @@
+import "react-native-gesture-handler";
+
 import React, { useState } from "react";
+import { Text, View } from "react-native";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import { SimpleLineIcons, Entypo, Feather } from "@expo/vector-icons";
 import { useFonts, Recursive_300 } from "@expo-google-fonts/inter";
@@ -18,7 +22,202 @@ import PostBlog from "./src/screens/NewBlog";
 
 import { getGlobalState, setGlobalState } from "./src/GlobalState";
 
-const Tab = createBottomTabNavigator();
+const LoggedOutTab = createBottomTabNavigator();
+const LoggedInTab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+{
+  /* <View>
+<Feather name="user" size={24} color="black" />
+<AntDesign name="arrowright" size={15} color="black" style={{ position: 'absolute', marginLeft: 16, marginTop: 4 }} />
+</View> */
+}
+
+function getTabBarIcon(route) {
+  return ({ focused, color, size }) => {
+    if (route.name === "Blogs") {
+      return <Entypo name="text-document" size={size} color={color} />;
+    } else if (route.name === "Post_Blog") {
+      return <Entypo name="new-message" size={size} color={color} />;
+    } else if (route.name === "Login") {
+      return (
+        <View>
+          <Feather name="user" size={size} color={color} />
+          <Feather
+            name="arrow-right"
+            size={(7 / 12) * size}
+            color={color}
+            style={{
+              position: "absolute",
+              marginLeft: 16,
+              marginTop: 4,
+              fontWeight: "bold",
+            }}
+          />
+        </View>
+      );
+    } else if (route.name === "Sign_Up") {
+      return <Feather name="user-plus" size={size} color={color} />;
+    } else if (route.name === "Logout") {
+      return <SimpleLineIcons name="logout" size={size} color={color} />;
+    }
+  };
+}
+
+function LoggedInTabNavigator() {
+  return (
+    <LoggedInTab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarButton: route.name === "Details" ? () => null : undefined,
+        tabBarIcon: getTabBarIcon(route),
+        tabBarActiveTintColor: "tomato",
+        tabBarInactiveTintColor: "gray",
+      })}
+    >
+      <LoggedInTab.Screen
+        name="Blogs"
+        component={Blogs}
+        initialParams={{ message: "" }}
+        options={{
+          headerLeft: (props) => (
+            <Entypo name="text-document" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
+      <LoggedInTab.Screen
+        name="Post_Blog"
+        component={PostBlog}
+        options={{
+          headerLeft: (props) => (
+            <Entypo name="new-message" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
+      <LoggedInTab.Screen name="Logout" component={Logout} />
+
+      <LoggedInTab.Screen
+        name="Details"
+        component={Blog_Info}
+        options={{
+          headerLeft: (props) => (
+            <Entypo name="text-document" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+    </LoggedInTab.Navigator>
+  );
+}
+
+function LoggedOutTabNavigator() {
+  return (
+    <LoggedOutTab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarButton: route.name === "Details" ? () => null : undefined,
+        tabBarIcon: getTabBarIcon(route),
+        tabBarActiveTintColor: "tomato",
+        tabBarInactiveTintColor: "gray",
+      })}
+    >
+      <LoggedOutTab.Screen
+        name="Blogs"
+        component={Blogs}
+        initialParams={{ message: "" }}
+        options={{
+          headerLeft: (props) => (
+            <Entypo name="text-document" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
+      <LoggedOutTab.Screen
+        name="Sign_Up"
+        component={Sign_Up}
+        options={{
+          headerLeft: (props) => (
+            <Feather name="user-plus" size={20} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
+      <LoggedOutTab.Screen
+        name="Login"
+        component={Login}
+        options={{
+          headerLeft: (props) => (
+            <SimpleLineIcons name="login" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
+      <LoggedOutTab.Screen
+        name="Details"
+        component={Blog_Info}
+        options={{
+          headerLeft: (props) => (
+            <Entypo name="text-document" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+    </LoggedOutTab.Navigator>
+  );
+}
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -61,107 +260,15 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarButton: [
-            "Details",
-          ].includes(route.name)
-            ? () => {
-                return null;
-              }
-            : undefined,
-          tabBarIcon: ({ focused, color, size }) => {
-            if (route.name === "Blogs") {
-              return <Entypo name="text-document" size={size} color={color} />;
-            } else if (route.name === "Post_Blog") {
-              return <Entypo name="new-message" size={size} color={color} />;
-            } else if (route.name === "Login") {
-              return <SimpleLineIcons name="login" size={size} color={color} />;
-            } else if (route.name === "Sign_Up") {
-              return <Feather name="user-plus" size={size} color={color} />;
-            } else if (route.name === "Logout") {
-              return (
-                <SimpleLineIcons name="logout" size={size} color={color} />
-              );
-            }
-          },
-          tabBarActiveTintColor: "tomato",
-          tabBarInactiveTintColor: "gray",
-        })}
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        initialRouteName={isSignedIn ? "LoggedIn" : "LoggedOut"}
       >
-        <Tab.Screen
-          name="Blogs"
-          component={Blogs}
-          initialParams={{ message: "" }}
-          options={{
-            headerLeft: (props) => (
-              <Entypo name="text-document" size={26} color="black" />
-            ),
-            headerRight: (props) => (
-              <Text style={{ fontSize: 16 }}>
-                <Feather name="user" size={24} color="black" />
-                User: {getGlobalState("username")}
-              </Text>
-            ),
-            headerLeftContainerStyle: { paddingLeft: 10 },
-            headerRightContainerStyle: { paddingRight: 10 },
-          }}
-        />
-  
-        {isSignedIn ? (
-          <Tab.Screen
-            name="Post_Blog"
-            component={PostBlog}
-            options={{
-              headerLeft: (props) => (
-                <Entypo name="new-message" size={26} color="black" />
-              ),
-              headerRight: (props) => (
-                <Text style={{ fontSize: 16 }}>
-                  <Feather name="user" size={24} color="black" />
-                  User: {getGlobalState("username")}
-                </Text>
-              ),
-              headerLeftContainerStyle: { paddingLeft: 10 },
-              headerRightContainerStyle: { paddingRight: 10 },
-            }}
-          />
-        ) : <Tab.Screen
-            name="Sign_Up"
-            component={Sign_Up}
-            options={{
-              headerLeft: (props) => (
-                <Feather name="user-plus" size={20} color="black" />
-              ),
-              headerRight: (props) => (
-                <Text style={{ fontSize: 16 }}>
-                  <Feather name="user" size={24} color="black" />
-                  User: {getGlobalState("username")}
-                </Text>
-              ),
-              headerLeftContainerStyle: { paddingLeft: 10 },
-              headerRightContainerStyle: { paddingRight: 10 },
-            }}
-          />
-        }
-
-        {isSignedIn ? (
-          <Tab.Screen name="Logout" component={Logout} />
-        ) : <Tab.Screen
-            name="Login"
-            component={Login}
-            options={{
-              headerLeft: (props) => (
-                <SimpleLineIcons name="login" size={26} color="black" />
-              ),
-              headerLeftContainerStyle: { paddingLeft: 10 },
-              headerRightContainerStyle: { paddingRight: 10 },
-            }}
-          />
-        }
-        
-        <Tab.Screen name="Details" component={Blog_Info} />
-      </Tab.Navigator>
+        <Stack.Screen name="LoggedIn" component={LoggedInTabNavigator} />
+        <Stack.Screen name="LoggedOut" component={LoggedOutTabNavigator} />
+      </Stack.Navigator>
       <StatusBar style="dark" />
     </NavigationContainer>
   );

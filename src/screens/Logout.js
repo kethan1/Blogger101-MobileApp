@@ -6,12 +6,13 @@ class Logout extends React.Component {
   componentDidMount() {}
 
   render() {
-    const { navigation } = this.props;
-
     SecureStore.deleteItemAsync("blogger101_Email").then(() => {
       SecureStore.deleteItemAsync("blogger101_Username").then(() => {
         SecureStore.deleteItemAsync("blogger101_Password").then(() => {
-          navigation.navigate("Blogs", { message: "Successfully Logged Out" });
+          this.props.navigation.navigate("LoggedOut", {
+            screen: "Blogs",
+            params: { message: "Successfully Logged Out" },
+          });
         });
       });
     });

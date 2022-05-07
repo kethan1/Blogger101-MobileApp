@@ -35,12 +35,14 @@ class Sign_Up extends React.Component {
         this.setState({ toDisplayUserLoggedIn: username });
       }
     });
-    this.props.navigation.setOptions({ headerRight: (props) => (
-      <Text style={{ fontSize: 16 }}>
-        <Feather name="user" size={24} color="black" />
-        User: {this.state.toDisplayUserLoggedIn}
-      </Text>
-    )});
+    this.props.navigation.setOptions({
+      headerRight: (props) => (
+        <Text style={{ fontSize: 16 }}>
+          <Feather name="user" size={24} color="black" />
+          User: {this.state.toDisplayUserLoggedIn}
+        </Text>
+      ),
+    });
   }
 
   check_user() {
@@ -65,9 +67,9 @@ class Sign_Up extends React.Component {
           SecureStore.setItemAsync("blogger101_Email", this.state.email);
           SecureStore.setItemAsync("blogger101_Username", this.state.username);
           SecureStore.setItemAsync("blogger101_Password", this.state.password);
-          this.props.navigation.navigate("Blogs", {
-            message: "Successfully Signed Up",
-            type: "success",
+          this.props.navigation.navigate("LoggedIn", {
+            screen: "Blogs",
+            params: { message: "Successfully Signed Up" },
           });
         } else {
           this.setState({
@@ -88,7 +90,7 @@ class Sign_Up extends React.Component {
   validateEmail(email) {
     let error = EMAIL_VERIFICATION_RE.test(email) || email === "";
     if (this.state.emailInputError !== !error) {
-      this.setState({emailInputError: !error});
+      this.setState({ emailInputError: !error });
     }
   }
 
@@ -96,7 +98,13 @@ class Sign_Up extends React.Component {
     let snackbar = null;
     if (this.state.snackbarMessage !== "") {
       snackbar = (
-        <Snackbar visible={true} onDismiss={() => this.setState({snackbarMessage: ""})} style={{ marginBottom: 50, color: "black" }}>{this.state.snackbarMessage}</Snackbar>
+        <Snackbar
+          visible={true}
+          onDismiss={() => this.setState({ snackbarMessage: "" })}
+          style={{ marginBottom: 50, color: "black" }}
+        >
+          {this.state.snackbarMessage}
+        </Snackbar>
       );
     }
     return (
@@ -116,8 +124,20 @@ class Sign_Up extends React.Component {
                       style={{ marginTop: 1, marginBottom: 10 }}
                       label="First Name"
                       value={this.state.firstName}
-                      onChangeText={text => this.setState({firstName: text})}
-                      right={<Feather name="user" size={24} color="black" />}
+                      onChangeText={(text) =>
+                        this.setState({ firstName: text })
+                      }
+                      left={
+                        <TextInput.Icon
+                          name={() => (
+                            <MaterialCommunityIcons
+                              name="badge-account-horizontal-outline"
+                              size={24}
+                              color="black"
+                            />
+                          )}
+                        />
+                      }
                       activeOutlineColor="#2196f3"
                       activeUnderlineColor="#2196f3"
                       selectionColor="#2196f3"
@@ -128,8 +148,18 @@ class Sign_Up extends React.Component {
                       style={{ marginTop: 1, marginBottom: 10 }}
                       label="Last Name"
                       value={this.state.lastName}
-                      onChangeText={text => this.setState({lastName: text})}
-                      right={<Feather name="user" size={24} color="black" />}
+                      onChangeText={(text) => this.setState({ lastName: text })}
+                      left={
+                        <TextInput.Icon
+                          name={() => (
+                            <MaterialCommunityIcons
+                              name="badge-account-horizontal-outline"
+                              size={24}
+                              color="black"
+                            />
+                          )}
+                        />
+                      }
                       activeOutlineColor="#2196f3"
                       activeUnderlineColor="#2196f3"
                       selectionColor="#2196f3"
@@ -141,8 +171,14 @@ class Sign_Up extends React.Component {
                   style={{ marginTop: 1, marginBottom: 10 }}
                   label="Username"
                   value={this.state.username}
-                  onChangeText={text => this.setState({username: text})}
-                  right={<Feather name="user" size={24} color="black" />}
+                  onChangeText={(text) => this.setState({ username: text })}
+                  left={
+                    <TextInput.Icon
+                      name={() => (
+                        <Feather name="tag" size={24} color="black" />
+                      )}
+                    />
+                  }
                   activeOutlineColor="#2196f3"
                   activeUnderlineColor="#2196f3"
                   selectionColor="#2196f3"
@@ -152,17 +188,23 @@ class Sign_Up extends React.Component {
                   style={{ marginTop: 1 }}
                   label="Email"
                   value={this.state.email}
-                  onChangeText={text => {
-                    this.setState({email: text});
+                  onChangeText={(text) => {
+                    this.setState({ email: text });
                     this.validateEmail(text);
                   }}
-                  right={<MaterialCommunityIcons
-                    name="email-outline"
-                    size={24}
-                    color="black"
-                  />}
-                  activeOutlineColor={this.state.emailInputError ? "#ff1f1f": "#2196f3"}
-                  activeUnderlineColor={this.state.emailInputError ? "#ff1f1f": "#2196f3"}
+                  left={
+                    <TextInput.Icon
+                      name={() => (
+                        <Feather name="mail" size={24} color="black" />
+                      )}
+                    />
+                  }
+                  activeOutlineColor={
+                    this.state.emailInputError ? "#ff1f1f" : "#2196f3"
+                  }
+                  activeUnderlineColor={
+                    this.state.emailInputError ? "#ff1f1f" : "#2196f3"
+                  }
                 />
                 <HelperText type="error" visible={this.state.emailInputError}>
                   Email address is invalid!
@@ -172,8 +214,14 @@ class Sign_Up extends React.Component {
                   style={{ marginBottom: 10 }}
                   label="Password"
                   value={this.state.password}
-                  onChangeText={text => this.setState({password: text})}
-                  right={<Feather name="lock" size={24} color="black" />}
+                  onChangeText={(text) => this.setState({ password: text })}
+                  left={
+                    <TextInput.Icon
+                      name={() => (
+                        <Feather name="lock" size={24} color="black" />
+                      )}
+                    />
+                  }
                   activeOutlineColor="#2196f3"
                   activeUnderlineColor="#2196f3"
                   selectionColor="#2196f3"
@@ -184,8 +232,16 @@ class Sign_Up extends React.Component {
                   style={{ marginTop: 1, marginBottom: 10 }}
                   label="Confirm Password"
                   value={this.state.confirmPassword}
-                  onChangeText={text => this.setState({confirmPassword: text})}
-                  right={<Feather name="lock" size={24} color="black" />}
+                  onChangeText={(text) =>
+                    this.setState({ confirmPassword: text })
+                  }
+                  left={
+                    <TextInput.Icon
+                      name={() => (
+                        <Feather name="lock" size={24} color="black" />
+                      )}
+                    />
+                  }
                   activeOutlineColor="#2196f3"
                   activeUnderlineColor="#2196f3"
                   selectionColor="#2196f3"
@@ -196,7 +252,7 @@ class Sign_Up extends React.Component {
                   <Button
                     mode="contained"
                     color="#2196f3"
-                    onPress={() => this.check_user()}
+                    onPress={this.check_user}
                   >
                     Submit
                   </Button>
