@@ -188,7 +188,9 @@ class Blog_Info extends React.Component {
                 <TextInput
                   label="Comment Content"
                   value={this.state.commentContent}
-                  onChangeText={(text) => this.setState({ commentContent: text })}
+                  onChangeText={(text) =>
+                    this.setState({ commentContent: text })
+                  }
                   left={
                     <TextInput.Icon
                       name={() => (

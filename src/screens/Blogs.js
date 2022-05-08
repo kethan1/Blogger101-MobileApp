@@ -123,7 +123,12 @@ class Blogs extends React.Component {
               renderItem={({ item }) => (
                 <View style={{ width: "100%" }}>
                   <TouchableOpacity
-                    style={{ width: "100%", flex: 1, justifyContent: "center", alignItems: "center" }}
+                    style={{
+                      width: "100%",
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
                     onPress={() =>
                       this.props.navigation.navigate("Details", {
                         blogInfo: item,

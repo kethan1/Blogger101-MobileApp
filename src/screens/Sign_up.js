@@ -1,5 +1,11 @@
 import * as React from "react";
-import { View, Text, Dimensions, KeyboardAvoidingView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Dimensions,
+  KeyboardAvoidingView,
+  TouchableOpacity,
+} from "react-native";
 import { Button, Snackbar, TextInput, HelperText } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
@@ -234,7 +240,11 @@ class Sign_Up extends React.Component {
                             });
                           }}
                         >
-                          <Feather name={this.state.showPassword ? "eye-off": "eye"} size={24} color="black" />
+                          <Feather
+                            name={this.state.showPassword ? "eye-off" : "eye"}
+                            size={24}
+                            color="black"
+                          />
                         </TouchableOpacity>
                       )}
                     />
@@ -266,11 +276,18 @@ class Sign_Up extends React.Component {
                           onPress={(event) => {
                             event.stopPropagation();
                             this.setState({
-                              showConfirmPassword: !this.state.showConfirmPassword,
+                              showConfirmPassword:
+                                !this.state.showConfirmPassword,
                             });
                           }}
                         >
-                          <Feather name={this.state.showConfirmPassword ? "eye-off": "eye"} size={24} color="black" />
+                          <Feather
+                            name={
+                              this.state.showConfirmPassword ? "eye-off" : "eye"
+                            }
+                            size={24}
+                            color="black"
+                          />
                         </TouchableOpacity>
                       )}
                     />
