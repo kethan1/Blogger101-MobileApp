@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Text, Dimensions, KeyboardAvoidingView } from "react-native";
+import { View, Text, Dimensions, KeyboardAvoidingView, TouchableOpacity } from "react-native";
 import { Button, Snackbar, TextInput, HelperText } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
@@ -14,7 +14,6 @@ class Sign_Up extends React.Component {
     super();
 
     this.state = {
-      entries: [],
       screenHeight: Dimensions.get("window").height,
       firstName: "",
       lastName: "",
@@ -24,6 +23,8 @@ class Sign_Up extends React.Component {
       confirmPassword: "",
       snackbarMessage: "",
       emailInputError: false,
+      showPassword: false,
+      showConfirmPassword: false,
     };
   }
 
@@ -222,10 +223,26 @@ class Sign_Up extends React.Component {
                       )}
                     />
                   }
+                  right={
+                    <TextInput.Icon
+                      name={() => (
+                        <TouchableOpacity
+                          onPress={(event) => {
+                            event.stopPropagation();
+                            this.setState({
+                              showPassword: !this.state.showPassword,
+                            });
+                          }}
+                        >
+                          <Feather name={this.state.showPassword ? "eye-off": "eye"} size={24} color="black" />
+                        </TouchableOpacity>
+                      )}
+                    />
+                  }
                   activeOutlineColor="#2196f3"
                   activeUnderlineColor="#2196f3"
                   selectionColor="#2196f3"
-                  secureTextEntry
+                  secureTextEntry={!this.state.showPassword}
                 />
 
                 <TextInput
@@ -242,10 +259,26 @@ class Sign_Up extends React.Component {
                       )}
                     />
                   }
+                  right={
+                    <TextInput.Icon
+                      name={() => (
+                        <TouchableOpacity
+                          onPress={(event) => {
+                            event.stopPropagation();
+                            this.setState({
+                              showConfirmPassword: !this.state.showConfirmPassword,
+                            });
+                          }}
+                        >
+                          <Feather name={this.state.showConfirmPassword ? "eye-off": "eye"} size={24} color="black" />
+                        </TouchableOpacity>
+                      )}
+                    />
+                  }
                   activeOutlineColor="#2196f3"
                   activeUnderlineColor="#2196f3"
                   selectionColor="#2196f3"
-                  secureTextEntry
+                  secureTextEntry={!this.state.showConfirmPassword}
                 />
 
                 <View style={{ marginTop: 1 }}>

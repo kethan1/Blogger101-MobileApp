@@ -159,7 +159,7 @@ class Login extends React.Component {
                           });
                         }}
                       >
-                        <Feather name="eye" size={24} color="black" />
+                        <Feather name={this.state.showPassword ? "eye-off": "eye"} size={24} color="black" />
                       </TouchableOpacity>
                     )}
                   />
