@@ -12,11 +12,12 @@ import { useFonts, Recursive_300 } from "@expo-google-fonts/inter";
 import { StatusBar } from "expo-status-bar";
 import AppLoading from "expo-app-loading";
 import * as SecureStore from "expo-secure-store";
+import * as Linking from 'expo-linking';
 
 import Blogs from "./src/screens/Blogs";
-import Blog_Info from "./src/screens/DetailsScreen";
+import Blog_Info from "./src/screens/BlogTemplate";
 import Login from "./src/screens/Login";
-import Sign_Up from "./src/screens/Sign_up";
+import Sign_Up from "./src/screens/SignUp";
 import Logout from "./src/screens/Logout";
 import PostBlog from "./src/screens/NewBlog";
 
@@ -25,12 +26,8 @@ import { getGlobalState, setGlobalState } from "./src/GlobalState";
 const LoggedOutTab = createBottomTabNavigator();
 const LoggedInTab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-{
-  /* <View>
-<Feather name="user" size={24} color="black" />
-<AntDesign name="arrowright" size={15} color="black" style={{ position: 'absolute', marginLeft: 16, marginTop: 4 }} />
-</View> */
-}
+
+const prefix = Linking.createURL('/');
 
 function getTabBarIcon(route) {
   return ({ focused, color, size }) => {
@@ -224,6 +221,10 @@ export default function App() {
     Recursive_300,
   });
 
+  const linking = {
+    prefixes: [prefix],
+  };
+
   const [isChecking, setIsChecking] = useState(true);
 
   const [isSignedIn, setIsSignedIn] = useState(null);
@@ -259,7 +260,7 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
