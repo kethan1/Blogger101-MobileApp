@@ -12,14 +12,16 @@ import { useFonts, Recursive_300 } from "@expo-google-fonts/inter";
 import { StatusBar } from "expo-status-bar";
 import AppLoading from "expo-app-loading";
 import * as SecureStore from "expo-secure-store";
-import * as Linking from 'expo-linking';
+import * as Linking from "expo-linking";
 
 import Blogs from "./src/screens/Blogs";
 import Blog_Info from "./src/screens/BlogTemplate";
 import Login from "./src/screens/Login";
 import Sign_Up from "./src/screens/SignUp";
 import Logout from "./src/screens/Logout";
-import PostBlog from "./src/screens/NewBlog";
+import PostBlog from "./src/screens/PostBlog";
+import EmailSent from "./src/screens/EmailSent";
+import EmailVerification from "./src/screens/EmailVerification";
 
 import { getGlobalState, setGlobalState } from "./src/GlobalState";
 
@@ -28,6 +30,11 @@ const LoggedInTab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
 const prefix = Linking.createURL('/');
+const config = {
+  screens: {
+    "Email Verification": "email_verification/:token",
+  },
+}
 
 function getTabBarIcon(route) {
   return ({ focused, color, size }) => {
@@ -52,7 +59,7 @@ function getTabBarIcon(route) {
           />
         </View>
       );
-    } else if (route.name === "Sign_Up") {
+    } else if (route.name === "Sign Up") {
       return <Feather name="user-plus" size={size} color={color} />;
     } else if (route.name === "Logout") {
       return <SimpleLineIcons name="logout" size={size} color={color} />;
@@ -134,7 +141,7 @@ function LoggedOutTabNavigator() {
   return (
     <LoggedOutTab.Navigator
       screenOptions={({ route }) => ({
-        tabBarButton: route.name === "Details" ? () => null : undefined,
+        tabBarButton: ["Email Verification", "Details", "Email Verification Link"].includes(route.name) ? () => null : undefined,
         tabBarIcon: getTabBarIcon(route),
         tabBarActiveTintColor: "tomato",
         tabBarInactiveTintColor: "gray",
@@ -160,7 +167,7 @@ function LoggedOutTabNavigator() {
       />
 
       <LoggedOutTab.Screen
-        name="Sign_Up"
+        name="Sign Up"
         component={Sign_Up}
         options={{
           headerLeft: (props) => (
@@ -212,6 +219,43 @@ function LoggedOutTabNavigator() {
           headerRightContainerStyle: { paddingRight: 10 },
         }}
       />
+
+      <LoggedOutTab.Screen
+        name="Email Verification"
+        component={EmailSent}
+        options={{
+          headerLeft: (props) => (
+            <Feather name="mail" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
+      <LoggedOutTab.Screen
+        name="Email Verification Link"
+        component={EmailVerification}
+        options={{
+          headerLeft: (props) => (
+            <Feather name="link" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
     </LoggedOutTab.Navigator>
   );
 }
@@ -223,6 +267,7 @@ export default function App() {
 
   const linking = {
     prefixes: [prefix],
+    config,
   };
 
   const [isChecking, setIsChecking] = useState(true);

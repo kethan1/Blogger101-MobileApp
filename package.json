@@ -1,5 +1,6 @@
 {
   "name": "blogger101-mobileapp",
+  "package": "com.blogger101.mobileapp",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -32,6 +33,7 @@
     "react-dom": "17.0.1",
     "react-native": "0.64.3",
     "react-native-gesture-handler": "~2.1.0",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-markdown-display": "^7.0.0-alpha.2",
     "react-native-paper": "^4.12.0",
     "react-native-safe-area-context": "3.3.2",
@@ -48,8 +50,5 @@
   "private": false,
   "lint-staged": {
     "*.{js,css,md}": "prettier --write"
-  },
-  "expo": {
-    "scheme": "blogger101"
   }
 }

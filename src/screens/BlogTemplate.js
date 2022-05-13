@@ -43,6 +43,7 @@ class Blog_Info extends React.Component {
   postComment() {
     SecureStore.getItemAsync("blogger101_Username").then((username) => {
       if (username === null) {
+        // TODO: use snackbar instead of alert
         alert("Please Login to Post a Comment");
       } else {
         if (this.state.subPostId === null) {

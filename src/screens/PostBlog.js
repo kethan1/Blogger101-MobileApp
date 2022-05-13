@@ -19,6 +19,9 @@ class PostBlog extends React.Component {
       blogTitle: "",
       uploadedFile: null,
     };
+
+    this.pickDocument = this.pickDocument.bind(this);
+    this.postBlog = this.postBlog.bind(this);
   }
 
   componentDidMount() {
@@ -45,7 +48,8 @@ class PostBlog extends React.Component {
   }
 
   async postBlog() {
-    SecureStore.getItemAsync("blogger101_Username").then((username) => {
+    SecureStore.getItemAsync("blogger101_Username")
+    .then((username) => {
       var newBlog = new FormData();
       newBlog.append("blog_title", this.state.blogTitle);
       newBlog.append("blog_content", this.state.blogContent);
@@ -70,7 +74,8 @@ class PostBlog extends React.Component {
       this.props.navigation.navigate("Blogs", {
         message: "Successfully Posted Blog",
       });
-    });
+    })
+    .catch((error) => {});
   }
 
   render() {

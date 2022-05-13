@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "blogger101",
     "name": "Blogger101-MobileApp",
     "slug": "Blogger101-MobileApp",
     "version": "1.0.0",
@@ -21,7 +22,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "softwareKeyboardLayoutMode":"pan"
     },
     "web": {
       "favicon": "./assets/favicon.png"

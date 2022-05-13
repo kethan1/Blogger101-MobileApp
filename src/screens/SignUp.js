@@ -2,13 +2,13 @@ import * as React from "react";
 import {
   View,
   Text,
-  Dimensions,
-  KeyboardAvoidingView,
   TouchableOpacity,
 } from "react-native";
 import { Button, Snackbar, TextInput, HelperText } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import * as Linking from "expo-linking";
 import * as SecureStore from "expo-secure-store";
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
@@ -20,7 +20,6 @@ class Sign_Up extends React.Component {
     super();
 
     this.state = {
-      screenHeight: Dimensions.get("window").height,
       firstName: "",
       lastName: "",
       username: "",
@@ -32,6 +31,8 @@ class Sign_Up extends React.Component {
       showPassword: false,
       showConfirmPassword: false,
     };
+
+    this.checkUser = this.checkUser.bind(this);
   }
 
   componentDidMount() {
@@ -52,9 +53,10 @@ class Sign_Up extends React.Component {
     });
   }
 
-  check_user() {
+  async checkUser() {
+    var initialLinkingUrl = await Linking.getInitialURL();
     if (this.state.password === this.state.confirmPassword) {
-      fetch(`${CONSTANTS.SERVER_URL}/api/v1/auth/add-user`, {
+      fetch(`${CONSTANTS.SERVER_URL}/api/v2/auth/add-user`, {
         method: "POST",
         mode: "cors",
         cache: "no-cache",
@@ -62,22 +64,21 @@ class Sign_Up extends React.Component {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          firstName: this.state.firstName,
-          lastName: this.state.lastName,
+          first_name: this.state.firstName,
+          last_name: this.state.lastName,
           username: this.state.username,
           email: this.state.email,
           password: this.state.password,
+          mobile_phone_uri: initialLinkingUrl,
         }),
       }).then(async (response) => {
+        console.log(response);
         const data = await response.json();
         if (data.success) {
           SecureStore.setItemAsync("blogger101_Email", this.state.email);
           SecureStore.setItemAsync("blogger101_Username", this.state.username);
           SecureStore.setItemAsync("blogger101_Password", this.state.password);
-          this.props.navigation.navigate("LoggedIn", {
-            screen: "Blogs",
-            params: { message: "Successfully Signed Up" },
-          });
+          this.props.navigation.navigate("Email Verification", {email: this.state.email});
         } else {
           this.setState({
             snackbarMessage:
@@ -118,196 +119,195 @@ class Sign_Up extends React.Component {
       <View>
         {snackbar}
 
-        <View style={{ height: this.state.screenHeight - 100 }}>
+        <View style={{ height: "100%" }}>
           <View style={[styles.container]}>
             <View style={{ width: "90%" }}>
-              <KeyboardAvoidingView
-                behavior="position"
-                keyboardVerticalOffset={this.state.screenHeight / 2 - 150}
-              >
-                <View style={{ flexDirection: "row", width: "100%" }}>
-                  <View style={{ width: "50%", paddingRight: 3 }}>
-                    <TextInput
-                      style={{ marginTop: 1, marginBottom: 10 }}
-                      label="First Name"
-                      value={this.state.firstName}
-                      onChangeText={(text) =>
-                        this.setState({ firstName: text })
-                      }
-                      left={
-                        <TextInput.Icon
-                          name={() => (
-                            <MaterialCommunityIcons
-                              name="badge-account-horizontal-outline"
+              <KeyboardAwareScrollView>
+                <View>
+                  <View style={{ flexDirection: "row", width: "100%" }}>
+                    <View style={{ width: "50%", paddingRight: 3 }}>
+                      <TextInput
+                        style={{ marginTop: 1, marginBottom: 10 }}
+                        label="First Name"
+                        value={this.state.firstName}
+                        onChangeText={(text) =>
+                          this.setState({ firstName: text })
+                        }
+                        left={
+                          <TextInput.Icon
+                            name={() => (
+                              <MaterialCommunityIcons
+                                name="badge-account-horizontal-outline"
+                                size={24}
+                                color="black"
+                              />
+                            )}
+                          />
+                        }
+                        activeOutlineColor="#2196f3"
+                        activeUnderlineColor="#2196f3"
+                        selectionColor="#2196f3"
+                      />
+                    </View>
+                    <View style={{ width: "50%", paddingLeft: 3 }}>
+                      <TextInput
+                        style={{ marginTop: 1, marginBottom: 10 }}
+                        label="Last Name"
+                        value={this.state.lastName}
+                        onChangeText={(text) => this.setState({ lastName: text })}
+                        left={
+                          <TextInput.Icon
+                            name={() => (
+                              <MaterialCommunityIcons
+                                name="badge-account-horizontal-outline"
+                                size={24}
+                                color="black"
+                              />
+                            )}
+                          />
+                        }
+                        activeOutlineColor="#2196f3"
+                        activeUnderlineColor="#2196f3"
+                        selectionColor="#2196f3"
+                      />
+                    </View>
+                  </View>
+
+                  <TextInput
+                    style={{ marginTop: 1, marginBottom: 10 }}
+                    label="Username"
+                    value={this.state.username}
+                    onChangeText={(text) => this.setState({ username: text })}
+                    left={
+                      <TextInput.Icon
+                        name={() => (
+                          <Feather name="tag" size={24} color="black" />
+                        )}
+                      />
+                    }
+                    activeOutlineColor="#2196f3"
+                    activeUnderlineColor="#2196f3"
+                    selectionColor="#2196f3"
+                  />
+
+                  <TextInput
+                    style={{ marginTop: 1 }}
+                    label="Email"
+                    value={this.state.email}
+                    onChangeText={(text) => {
+                      this.setState({ email: text });
+                      this.validateEmail(text);
+                    }}
+                    left={
+                      <TextInput.Icon
+                        name={() => (
+                          <Feather name="mail" size={24} color="black" />
+                        )}
+                      />
+                    }
+                    activeOutlineColor={
+                      this.state.emailInputError ? "#ff1f1f" : "#2196f3"
+                    }
+                    activeUnderlineColor={
+                      this.state.emailInputError ? "#ff1f1f" : "#2196f3"
+                    }
+                  />
+                  <HelperText type="error" visible={this.state.emailInputError}>
+                    Email address is invalid!
+                  </HelperText>
+
+                  <TextInput
+                    style={{ marginBottom: 10 }}
+                    label="Password"
+                    value={this.state.password}
+                    onChangeText={(text) => this.setState({ password: text })}
+                    left={
+                      <TextInput.Icon
+                        name={() => (
+                          <Feather name="lock" size={24} color="black" />
+                        )}
+                      />
+                    }
+                    right={
+                      <TextInput.Icon
+                        name={() => (
+                          <TouchableOpacity
+                            onPress={(event) => {
+                              event.stopPropagation();
+                              this.setState({
+                                showPassword: !this.state.showPassword,
+                              });
+                            }}
+                          >
+                            <Feather
+                              name={this.state.showPassword ? "eye-off" : "eye"}
                               size={24}
                               color="black"
                             />
-                          )}
-                        />
-                      }
-                      activeOutlineColor="#2196f3"
-                      activeUnderlineColor="#2196f3"
-                      selectionColor="#2196f3"
-                    />
-                  </View>
-                  <View style={{ width: "50%", paddingLeft: 3 }}>
-                    <TextInput
-                      style={{ marginTop: 1, marginBottom: 10 }}
-                      label="Last Name"
-                      value={this.state.lastName}
-                      onChangeText={(text) => this.setState({ lastName: text })}
-                      left={
-                        <TextInput.Icon
-                          name={() => (
-                            <MaterialCommunityIcons
-                              name="badge-account-horizontal-outline"
+                          </TouchableOpacity>
+                        )}
+                      />
+                    }
+                    activeOutlineColor="#2196f3"
+                    activeUnderlineColor="#2196f3"
+                    selectionColor="#2196f3"
+                    secureTextEntry={!this.state.showPassword}
+                  />
+
+                  <TextInput
+                    style={{ marginTop: 1, marginBottom: 10 }}
+                    label="Confirm Password"
+                    value={this.state.confirmPassword}
+                    onChangeText={(text) =>
+                      this.setState({ confirmPassword: text })
+                    }
+                    left={
+                      <TextInput.Icon
+                        name={() => (
+                          <Feather name="lock" size={24} color="black" />
+                        )}
+                      />
+                    }
+                    right={
+                      <TextInput.Icon
+                        name={() => (
+                          <TouchableOpacity
+                            onPress={(event) => {
+                              event.stopPropagation();
+                              this.setState({
+                                showConfirmPassword:
+                                  !this.state.showConfirmPassword,
+                              });
+                            }}
+                          >
+                            <Feather
+                              name={
+                                this.state.showConfirmPassword ? "eye-off" : "eye"
+                              }
                               size={24}
                               color="black"
                             />
-                          )}
-                        />
-                      }
-                      activeOutlineColor="#2196f3"
-                      activeUnderlineColor="#2196f3"
-                      selectionColor="#2196f3"
-                    />
+                          </TouchableOpacity>
+                        )}
+                      />
+                    }
+                    activeOutlineColor="#2196f3"
+                    activeUnderlineColor="#2196f3"
+                    selectionColor="#2196f3"
+                    secureTextEntry={!this.state.showConfirmPassword}
+                  />
+
+                  <View style={{ marginTop: 1 }}>
+                    <Button
+                      mode="contained"
+                      color="#2196f3"
+                      onPress={this.checkUser}
+                    >
+                      Submit
+                    </Button>
                   </View>
                 </View>
-
-                <TextInput
-                  style={{ marginTop: 1, marginBottom: 10 }}
-                  label="Username"
-                  value={this.state.username}
-                  onChangeText={(text) => this.setState({ username: text })}
-                  left={
-                    <TextInput.Icon
-                      name={() => (
-                        <Feather name="tag" size={24} color="black" />
-                      )}
-                    />
-                  }
-                  activeOutlineColor="#2196f3"
-                  activeUnderlineColor="#2196f3"
-                  selectionColor="#2196f3"
-                />
-
-                <TextInput
-                  style={{ marginTop: 1 }}
-                  label="Email"
-                  value={this.state.email}
-                  onChangeText={(text) => {
-                    this.setState({ email: text });
-                    this.validateEmail(text);
-                  }}
-                  left={
-                    <TextInput.Icon
-                      name={() => (
-                        <Feather name="mail" size={24} color="black" />
-                      )}
-                    />
-                  }
-                  activeOutlineColor={
-                    this.state.emailInputError ? "#ff1f1f" : "#2196f3"
-                  }
-                  activeUnderlineColor={
-                    this.state.emailInputError ? "#ff1f1f" : "#2196f3"
-                  }
-                />
-                <HelperText type="error" visible={this.state.emailInputError}>
-                  Email address is invalid!
-                </HelperText>
-
-                <TextInput
-                  style={{ marginBottom: 10 }}
-                  label="Password"
-                  value={this.state.password}
-                  onChangeText={(text) => this.setState({ password: text })}
-                  left={
-                    <TextInput.Icon
-                      name={() => (
-                        <Feather name="lock" size={24} color="black" />
-                      )}
-                    />
-                  }
-                  right={
-                    <TextInput.Icon
-                      name={() => (
-                        <TouchableOpacity
-                          onPress={(event) => {
-                            event.stopPropagation();
-                            this.setState({
-                              showPassword: !this.state.showPassword,
-                            });
-                          }}
-                        >
-                          <Feather
-                            name={this.state.showPassword ? "eye-off" : "eye"}
-                            size={24}
-                            color="black"
-                          />
-                        </TouchableOpacity>
-                      )}
-                    />
-                  }
-                  activeOutlineColor="#2196f3"
-                  activeUnderlineColor="#2196f3"
-                  selectionColor="#2196f3"
-                  secureTextEntry={!this.state.showPassword}
-                />
-
-                <TextInput
-                  style={{ marginTop: 1, marginBottom: 10 }}
-                  label="Confirm Password"
-                  value={this.state.confirmPassword}
-                  onChangeText={(text) =>
-                    this.setState({ confirmPassword: text })
-                  }
-                  left={
-                    <TextInput.Icon
-                      name={() => (
-                        <Feather name="lock" size={24} color="black" />
-                      )}
-                    />
-                  }
-                  right={
-                    <TextInput.Icon
-                      name={() => (
-                        <TouchableOpacity
-                          onPress={(event) => {
-                            event.stopPropagation();
-                            this.setState({
-                              showConfirmPassword:
-                                !this.state.showConfirmPassword,
-                            });
-                          }}
-                        >
-                          <Feather
-                            name={
-                              this.state.showConfirmPassword ? "eye-off" : "eye"
-                            }
-                            size={24}
-                            color="black"
-                          />
-                        </TouchableOpacity>
-                      )}
-                    />
-                  }
-                  activeOutlineColor="#2196f3"
-                  activeUnderlineColor="#2196f3"
-                  selectionColor="#2196f3"
-                  secureTextEntry={!this.state.showConfirmPassword}
-                />
-
-                <View style={{ marginTop: 1 }}>
-                  <Button
-                    mode="contained"
-                    color="#2196f3"
-                    onPress={this.check_user}
-                  >
-                    Submit
-                  </Button>
-                </View>
-              </KeyboardAvoidingView>
+              </KeyboardAwareScrollView>
             </View>
           </View>
         </View>

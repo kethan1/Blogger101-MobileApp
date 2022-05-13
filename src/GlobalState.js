@@ -1,4 +1,8 @@
-let globalState = {};
+let globalState = {
+  username: null,
+  email: null,
+  password: null,
+};
 
 function setGlobalState(key, value) {
   globalState[key] = value;
