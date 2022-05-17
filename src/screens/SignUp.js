@@ -53,8 +53,8 @@ class Sign_Up extends React.Component {
     });
   }
 
-  async checkUser() {
-    var initialLinkingUrl = await Linking.getInitialURL();
+  checkUser() {
+    var initialLinkingUrl = Linking.createURL("/confirm/");
     if (this.state.password === this.state.confirmPassword) {
       fetch(`${CONSTANTS.SERVER_URL}/api/v2/auth/add-user`, {
         method: "POST",
@@ -72,19 +72,18 @@ class Sign_Up extends React.Component {
           mobile_phone_uri: initialLinkingUrl,
         }),
       }).then(async (response) => {
-        console.log(response);
         const data = await response.json();
         if (data.success) {
-          SecureStore.setItemAsync("blogger101_Email", this.state.email);
-          SecureStore.setItemAsync("blogger101_Username", this.state.username);
-          SecureStore.setItemAsync("blogger101_Password", this.state.password);
-          this.props.navigation.navigate("Email Verification", {email: this.state.email});
+          this.props.navigation.navigate("LoggedOut", {
+            screen: "Email Verification",
+            params: { email: this.state.email }
+          })
         } else {
           this.setState({
             snackbarMessage:
               data.already === "both"
-                ? "Username and email taken"
-                : `${data.already} taken`,
+                ? "Username and Email Already Taken"
+                : `${data.already.charAt(0).toUpperCase() + data.already.slice(1)} Already Taken`,
           });
         }
       });

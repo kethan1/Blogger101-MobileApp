@@ -29,12 +29,16 @@ const LoggedOutTab = createBottomTabNavigator();
 const LoggedInTab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-const prefix = Linking.createURL('/');
+const prefix = Linking.createURL("/");
 const config = {
   screens: {
-    "Email Verification": "email_verification/:token",
+    LoggedOut: {
+      screens: {
+        "Email Verification Link": "confirm/:token",
+      },
+    },
   },
-}
+};
 
 function getTabBarIcon(route) {
   return ({ focused, color, size }) => {
@@ -158,7 +162,7 @@ function LoggedOutTabNavigator() {
           headerRight: (props) => (
             <Text style={{ fontSize: 16 }}>
               <Feather name="user" size={24} color="black" />
-              User: {getGlobalState("username")}
+              User: Not Logged In
             </Text>
           ),
           headerLeftContainerStyle: { paddingLeft: 10 },
@@ -176,7 +180,7 @@ function LoggedOutTabNavigator() {
           headerRight: (props) => (
             <Text style={{ fontSize: 16 }}>
               <Feather name="user" size={24} color="black" />
-              User: {getGlobalState("username")}
+              User: Not Logged In
             </Text>
           ),
           headerLeftContainerStyle: { paddingLeft: 10 },
@@ -194,7 +198,7 @@ function LoggedOutTabNavigator() {
           headerRight: (props) => (
             <Text style={{ fontSize: 16 }}>
               <Feather name="user" size={24} color="black" />
-              User: {getGlobalState("username")}
+              User: Not Logged In
             </Text>
           ),
           headerLeftContainerStyle: { paddingLeft: 10 },
@@ -212,7 +216,7 @@ function LoggedOutTabNavigator() {
           headerRight: (props) => (
             <Text style={{ fontSize: 16 }}>
               <Feather name="user" size={24} color="black" />
-              User: {getGlobalState("username")}
+              User: Not Logged In
             </Text>
           ),
           headerLeftContainerStyle: { paddingLeft: 10 },
@@ -230,7 +234,7 @@ function LoggedOutTabNavigator() {
           headerRight: (props) => (
             <Text style={{ fontSize: 16 }}>
               <Feather name="user" size={24} color="black" />
-              User: {getGlobalState("username")}
+              User: Not Logged In
             </Text>
           ),
           headerLeftContainerStyle: { paddingLeft: 10 },
@@ -248,7 +252,7 @@ function LoggedOutTabNavigator() {
           headerRight: (props) => (
             <Text style={{ fontSize: 16 }}>
               <Feather name="user" size={24} color="black" />
-              User: {getGlobalState("username")}
+              User: Not Logged In
             </Text>
           ),
           headerLeftContainerStyle: { paddingLeft: 10 },
@@ -266,7 +270,7 @@ export default function App() {
   });
 
   const linking = {
-    prefixes: [prefix],
+    prefixes: [prefix, "https://blogger-101.herokuapp.com"],
     config,
   };
 
@@ -296,12 +300,6 @@ export default function App() {
         onError={console.warn}
       />
     );
-  } else {
-    if (getGlobalState("username") === null && isSignedIn !== false) {
-      setIsSignedIn(false);
-    } else if (getGlobalState("username") !== null && isSignedIn !== true) {
-      setIsSignedIn(true);
-    }
   }
 
   return (

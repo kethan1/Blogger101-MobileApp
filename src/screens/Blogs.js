@@ -12,7 +12,8 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { Snackbar, Card, Title } from "react-native-paper";
 import styles from "../styles/stylesheet_main";
-import { getGlobalState, setGlobalState } from "../GlobalState";
+import { getGlobalState } from "../GlobalState";
+import SetHeader from "../SetHeaderUser";
 
 class Blogs extends React.Component {
   constructor() {
@@ -28,14 +29,6 @@ class Blogs extends React.Component {
 
   componentDidMount() {
     this.refreshBlogs();
-    this.props.navigation.setOptions({
-      headerRight: (props) => (
-        <Text style={{ fontSize: 16 }}>
-          <Feather name="user" size={24} color="black" />
-          User: {getGlobalState("username")}
-        </Text>
-      ),
-    });
   }
 
   refreshBlogs() {
@@ -101,6 +94,10 @@ class Blogs extends React.Component {
     return (
       <View>
         {snackbar}
+        <SetHeader
+          navigation={this.props.navigation}
+          getGlobalState={getGlobalState}
+        />
 
         <View style={{ height: this.state.screenHeight - 100 }}>
           <Text

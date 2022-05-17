@@ -8,6 +8,8 @@ import { useNavigation } from "@react-navigation/native";
 import Markdown from "react-native-markdown-display";
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
+import { getGlobalState } from "../GlobalState";
+import SetHeader from "../SetHeaderUser";
 
 class PostBlog extends React.Component {
   constructor(props) {
@@ -81,6 +83,11 @@ class PostBlog extends React.Component {
   render() {
     return (
       <View>
+        <SetHeader
+          navigation={this.props.navigation}
+          getGlobalState={getGlobalState}
+        />
+
         <View style={{ height: this.state.ScreenHeight - 100 }}>
           <Text>{"\n\n"}</Text>
           <View style={{ justifyContent: "center", alignItems: "center" }}>

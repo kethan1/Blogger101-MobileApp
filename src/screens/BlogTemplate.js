@@ -7,6 +7,8 @@ import * as SecureStore from "expo-secure-store";
 import Markdown, { MarkdownIt } from "react-native-markdown-display";
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
+import { getGlobalState } from "../GlobalState";
+import SetHeader from "../SetHeaderUser";
 
 class Blog_Info extends React.Component {
   constructor() {
@@ -134,6 +136,11 @@ class Blog_Info extends React.Component {
 
     return (
       <View>
+        <SetHeader
+          navigation={this.props.navigation}
+          getGlobalState={getGlobalState}
+        />
+
         <View
           style={{
             height: this.state.screenHeight - 100,
