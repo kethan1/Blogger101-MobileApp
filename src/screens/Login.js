@@ -162,9 +162,9 @@ class Login extends React.Component {
                       mode="contained"
                       color="#2196f3"
                       onPress={this.checkUser}
-                      style={{ borderRadius: 10}}
+                      style={{ borderRadius: 10 }}
                     >
-                      Submit
+                      Login
                     </Button>
                   </View>
 

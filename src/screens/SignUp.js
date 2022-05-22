@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import * as Linking from "expo-linking";
@@ -279,13 +279,19 @@ class Sign_Up extends React.Component {
                       mode="contained"
                       color="#2196f3"
                       onPress={this.checkUser}
+                      style={{ borderRadius: 10 }}
                     >
-                      Submit
+                      Sign Up
                     </Button>
                   </View>
                 </View>
               </KeyboardAwareScrollView>
             </View>
+          </View>
+          <View>
+            <Text style={{ textAlign: "center", fontSize: 12 }}>
+              Already have an account? <Text style={{ color: "#009DDC" }} onPress={() => this.props.navigation.navigate("Login")}>Login</Text>
+            </Text>
           </View>
         </View>
       </View>
