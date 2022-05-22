@@ -1,15 +1,17 @@
 import * as React from "react";
 import { View, Text, Dimensions } from "react-native";
-import { Button, TextInput } from "react-native-paper";
-import { Entypo, Feather, MaterialIcons } from "@expo/vector-icons";
+
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
 import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import Markdown from "react-native-markdown-display";
+import { Button, TextInput } from "react-native-paper";
+
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
-import { getGlobalState } from "../GlobalState";
 import SetHeader from "../SetHeaderUser";
+import { getGlobalState } from "../GlobalState";
 
 class PostBlog extends React.Component {
   constructor(props) {
@@ -24,24 +26,6 @@ class PostBlog extends React.Component {
 
     this.pickDocument = this.pickDocument.bind(this);
     this.postBlog = this.postBlog.bind(this);
-  }
-
-  componentDidMount() {
-    SecureStore.getItemAsync("blogger101_Username").then((username) => {
-      if (username === null) {
-        this.setState({ toDisplayUserLoggedIn: "Not Logged In" });
-      } else {
-        this.setState({ toDisplayUserLoggedIn: username });
-      }
-    });
-    this.props.navigation.setOptions({
-      headerRight: (props) => (
-        <Text style={{ fontSize: 16 }}>
-          <Feather name="user" size={24} color="black" />
-          User: {this.state.toDisplayUserLoggedIn}
-        </Text>
-      ),
-    });
   }
 
   async pickDocument() {
@@ -90,48 +74,49 @@ class PostBlog extends React.Component {
 
         <View style={{ height: this.state.ScreenHeight - 100 }}>
           <Text>{"\n\n"}</Text>
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            <TextInput
-              style={{ width: "90%", marginTop: 1, marginBottom: 10 }}
-              label="Blog Title"
-              value={this.state.blogTitle}
-              onChangeText={(text) => this.setState({ blogTitle: text })}
-              left={<MaterialIcons name="title" size={24} color="black" />}
-              activeOutlineColor="#2196f3"
-              activeUnderlineColor="#2196f3"
-              selectionColor="#2196f3"
-            />
-            <TextInput
-              style={{ width: "90%", marginTop: 1, marginBottom: 10 }}
-              label="Blog Content"
-              value={this.state.blogContent}
-              onChangeText={(text) => this.setState({ blogContent: text })}
-              left={<Entypo name="text-document" size={24} color="black" />}
-              activeOutlineColor="#2196f3"
-              activeUnderlineColor="#2196f3"
-              selectionColor="#2196f3"
-              multiline={true}
-            />
-            <Text style={{ fontSize: 16, marginTop: 10, marginBottom: 40 }}>
-              Markdown Preview
-            </Text>
-            <Markdown style={{ body: { fontSize: 16 } }}>
-              {this.state.blogContent}
-            </Markdown>
-          </View>
-          <Button color="#2196f3" tintColor="white" onPress={this.pickDocument}>
-            Select Image
-          </Button>
-          <Text>{"\n"}</Text>
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
-            <Button
-              style={{ width: "90%" }}
-              mode="contained"
-              color="#2196f3"
-              onPress={this.postBlog}
-            >
-              Post Blog
-            </Button>
+          <View style={{ height: "100%" }}>
+            <View style={{ flex: 1, alignItems: "center", }}>
+              <View style={{ width: "90%" }}>
+                <TextInput
+                  style={{ marginTop: 1, marginBottom: 10 }}
+                  label="Blog Title"
+                  value={this.state.blogTitle}
+                  onChangeText={(text) => this.setState({ blogTitle: text })}
+                  left={<MaterialIcons name="title" size={24} color="black" />}
+                  activeOutlineColor="#2196f3"
+                  activeUnderlineColor="#2196f3"
+                  selectionColor="#2196f3"
+                />
+                <TextInput
+                  style={{ marginTop: 1, marginBottom: 10 }}
+                  label="Blog Content"
+                  value={this.state.blogContent}
+                  onChangeText={(text) => this.setState({ blogContent: text })}
+                  left={<Entypo name="text-document" size={24} color="black" />}
+                  activeOutlineColor="#2196f3"
+                  activeUnderlineColor="#2196f3"
+                  selectionColor="#2196f3"
+                  multiline={true}
+                />
+                <Text style={{ fontSize: 16, marginTop: 10, marginBottom: 40, textAlign: "center" }}>
+                  Markdown Preview
+                </Text>
+                <Markdown style={{ body: { fontSize: 16 } }}>
+                  {this.state.blogContent}
+                </Markdown>
+                <Button style={{ alignSelf: "center" }} color="#2196f3" tintColor="white" onPress={this.pickDocument}>
+                  Select Image
+                </Button>
+                <Button
+                  style={{ width: "90%", alignSelf: "center" }}
+                  mode="contained"
+                  color="#2196f3"
+                  onPress={this.postBlog}
+                >
+                  Post Blog
+                </Button>
+              </View>
+            </View>
           </View>
         </View>
       </View>

@@ -6,14 +6,18 @@ import {
   Dimensions,
   TouchableOpacity,
   Image,
+  RefreshControl,
 } from "react-native";
-import CONSTANTS from "../Constants";
-import { useRoute, useNavigation } from "@react-navigation/native";
+
 import { Feather } from "@expo/vector-icons";
 import { Snackbar, Card, Title } from "react-native-paper";
+import { useRoute, useNavigation } from "@react-navigation/native";
+
 import styles from "../styles/stylesheet_main";
-import { getGlobalState } from "../GlobalState";
 import SetHeader from "../SetHeaderUser";
+import CONSTANTS from "../Constants";
+import { getGlobalState } from "../GlobalState";
+
 
 class Blogs extends React.Component {
   constructor() {
@@ -24,7 +28,11 @@ class Blogs extends React.Component {
       screenHeight: Dimensions.get("window").height,
       screenWidth: Dimensions.get("window").width,
       snackbarMessage: "",
+      refreshing: false,
     };
+
+    this.refreshBlogs = this.refreshBlogs.bind(this);
+    this.getSizes = this.getSizes.bind(this);
   }
 
   componentDidMount() {
@@ -32,6 +40,7 @@ class Blogs extends React.Component {
   }
 
   refreshBlogs() {
+    this.setState({ refreshing: true });
     fetch(`${CONSTANTS.SERVER_URL}/api/v1/blogs`).then(async (response) => {
       var responseInJson = await response.json();
       for (let blog of responseInJson) {
@@ -44,7 +53,10 @@ class Blogs extends React.Component {
       }
       this.getSizes();
       this.setState({ entries: responseInJson });
+    }).catch((error) => {
+      this.setState({ snackbarMessage: "Please Check Your Network Connection" });
     });
+    this.setState({ refreshing: false });
   }
 
   getSizes() {
@@ -99,20 +111,7 @@ class Blogs extends React.Component {
           getGlobalState={getGlobalState}
         />
 
-        <View style={{ height: this.state.screenHeight - 100 }}>
-          <Text
-            style={{
-              marginRight: 5,
-              marginBottom: 20,
-              textAlign: "right",
-              fontSize: 15,
-            }}
-            onPress={this.refreshBlogs}
-          >
-            <Feather name="refresh-ccw" size={17} color="black" />
-            &nbsp;Refresh Blogs
-          </Text>
-
+        <View style={{ height: this.state.screenHeight - 100, marginTop: 15 }}>
           <View style={[styles.container]}>
             <FlatList
               style={{ width: "100%" }}
@@ -125,6 +124,7 @@ class Blogs extends React.Component {
                       flex: 1,
                       justifyContent: "center",
                       alignItems: "center",
+                      marginBottom: 15,
                     }}
                     onPress={() =>
                       this.props.navigation.navigate("Details", {
@@ -153,10 +153,15 @@ class Blogs extends React.Component {
                       </Card.Content>
                     </Card>
                   </TouchableOpacity>
-                  <Text style={{ fontSize: 15 }}>{"\n"}</Text>
                 </View>
               )}
               keyExtractor={(item) => item.link}
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.refreshBlogs}
+                />
+              }
             />
           </View>
         </View>

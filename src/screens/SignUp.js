@@ -1,19 +1,15 @@
 import * as React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-} from "react-native";
-import { Button, Snackbar, TextInput, HelperText } from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
+import { View, TouchableOpacity } from "react-native";
+
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as Linking from "expo-linking";
-import * as SecureStore from "expo-secure-store";
+import { useNavigation } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Button, Snackbar, TextInput, HelperText } from "react-native-paper";
+
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
 
-var EMAIL_VERIFICATION_RE = /\S+@\S+\.\S+/;
 
 class Sign_Up extends React.Component {
   constructor() {
@@ -33,24 +29,6 @@ class Sign_Up extends React.Component {
     };
 
     this.checkUser = this.checkUser.bind(this);
-  }
-
-  componentDidMount() {
-    SecureStore.getItemAsync("blogger101_Username").then((username) => {
-      if (username === null) {
-        this.setState({ toDisplayUserLoggedIn: "Not Logged In" });
-      } else {
-        this.setState({ toDisplayUserLoggedIn: username });
-      }
-    });
-    this.props.navigation.setOptions({
-      headerRight: (props) => (
-        <Text style={{ fontSize: 16 }}>
-          <Feather name="user" size={24} color="black" />
-          User: {this.state.toDisplayUserLoggedIn}
-        </Text>
-      ),
-    });
   }
 
   checkUser() {
@@ -95,7 +73,7 @@ class Sign_Up extends React.Component {
   }
 
   validateEmail(email) {
-    let error = EMAIL_VERIFICATION_RE.test(email) || email === "";
+    let error = CONSTANTS.EMAIL_VERIFICATION_RE.test(email) || email === "";
     if (this.state.emailInputError !== !error) {
       this.setState({ emailInputError: !error });
     }

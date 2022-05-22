@@ -1,10 +1,9 @@
 import * as React from "react";
 import { Text } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function SetHeader({ navigation, getGlobalState }) {
-  console.log(getGlobalState("username"))
   useFocusEffect(
     React.useCallback(() => {
       navigation.setOptions({

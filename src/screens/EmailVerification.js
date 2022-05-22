@@ -1,9 +1,11 @@
 import * as React from "react";
+
 import { useRoute, useNavigation } from "@react-navigation/native";
-import CONSTANTS from "../Constants";
-import { setGlobalState } from "../GlobalState";
 import AppLoading from "expo-app-loading";
 import * as SecureStore from "expo-secure-store";
+
+import CONSTANTS from "../Constants";
+import { setGlobalState } from "../GlobalState";
 
 class EmailVerification extends React.Component {
   constructor() {
@@ -36,7 +38,7 @@ class EmailVerification extends React.Component {
         params: { message: "Your Email Has Been Verified!" },
       });
     } else {
-      console.log(responseJson)
+      console.warn(responseJson);
     }
   }
 

@@ -22,6 +22,9 @@ import Logout from "./src/screens/Logout";
 import PostBlog from "./src/screens/PostBlog";
 import EmailSent from "./src/screens/EmailSent";
 import EmailVerification from "./src/screens/EmailVerification";
+import ChangePasswordEmailSent from "./src/screens/ChangePasswordEmailSent";
+import ChangePassword from "./src/screens/ChangePassword";
+import ChangePasswordLink from "./src/screens/ChangePasswordLink";
 
 import { getGlobalState, setGlobalState } from "./src/GlobalState";
 
@@ -35,6 +38,7 @@ const config = {
     LoggedOut: {
       screens: {
         "Email Verification Link": "confirm/:token",
+        "Change Password Link": "change_password/:token",
       },
     },
   },
@@ -44,7 +48,7 @@ function getTabBarIcon(route) {
   return ({ focused, color, size }) => {
     if (route.name === "Blogs") {
       return <Entypo name="text-document" size={size} color={color} />;
-    } else if (route.name === "Post_Blog") {
+    } else if (route.name === "Post Blog") {
       return <Entypo name="new-message" size={size} color={color} />;
     } else if (route.name === "Login") {
       return (
@@ -101,7 +105,7 @@ function LoggedInTabNavigator() {
       />
 
       <LoggedInTab.Screen
-        name="Post_Blog"
+        name="Post Blog"
         component={PostBlog}
         options={{
           headerLeft: (props) => (
@@ -145,7 +149,7 @@ function LoggedOutTabNavigator() {
   return (
     <LoggedOutTab.Navigator
       screenOptions={({ route }) => ({
-        tabBarButton: ["Email Verification", "Details", "Email Verification Link"].includes(route.name) ? () => null : undefined,
+        tabBarButton: ["Details", "Email Verification", "Email Verification Link", "Change Password Email", "Change Password", "Change Password Link"].includes(route.name) ? () => null : undefined,
         tabBarIcon: getTabBarIcon(route),
         tabBarActiveTintColor: "tomato",
         tabBarInactiveTintColor: "gray",
@@ -260,6 +264,59 @@ function LoggedOutTabNavigator() {
         }}
       />
 
+      <LoggedOutTab.Screen
+        name="Change Password Email"
+        component={ChangePasswordEmailSent}
+        options={{
+          headerLeft: (props) => (
+            <Feather name="link" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: Not Logged In
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
+      <LoggedOutTab.Screen
+        name="Change Password"
+        component={ChangePassword}
+        options={{
+          headerLeft: (props) => (
+            <Feather name="link" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: Not Logged In
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
+      <LoggedOutTab.Screen
+        name="Change Password Link"
+        component={ChangePasswordLink}
+        options={{
+          headerLeft: (props) => (
+            <Feather name="link" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: Not Logged In
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
     </LoggedOutTab.Navigator>
   );
 }

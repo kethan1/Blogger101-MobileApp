@@ -1,14 +1,17 @@
 import * as React from "react";
 import { View, Text, Dimensions, ScrollView } from "react-native";
+
 import { Feather } from "@expo/vector-icons";
-import { TextInput } from "react-native-paper";
-import { useRoute, useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import Markdown, { MarkdownIt } from "react-native-markdown-display";
+import { TextInput } from "react-native-paper";
+
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
-import { getGlobalState } from "../GlobalState";
 import SetHeader from "../SetHeaderUser";
+import { getGlobalState } from "../GlobalState";
+
 
 class Blog_Info extends React.Component {
   constructor() {
@@ -119,13 +122,6 @@ class Blog_Info extends React.Component {
 
   componentDidMount() {
     this.refreshBlogComments();
-    SecureStore.getItemAsync("blogger101_Username").then((username) => {
-      if (username === null) {
-        this.setState({ toDisplayUserLoggedIn: "Not Logged In" });
-      } else {
-        this.setState({ toDisplayUserLoggedIn: username });
-      }
-    });
     this.props.navigation.setOptions({
       title: this.props.route.params.blogInfo.title,
     });
@@ -149,9 +145,8 @@ class Blog_Info extends React.Component {
             marginTop: "2%",
           }}
         >
-          <Text style={{ fontSize: 25, textAlign: "center" }}>
+          <Text style={{ fontSize: 25, textAlign: "center", marginBottom: 10, marginTop: 10 }}>
             {route.params.blogInfo.title}
-            {"\n"}
           </Text>
           <View>
             <ScrollView style={{ width: "100%" }}>

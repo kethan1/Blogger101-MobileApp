@@ -1,19 +1,15 @@
 import * as React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
+
 import { Feather } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
+import { useNavigation } from "@react-navigation/native";
 import { Button, Snackbar, TextInput, HelperText } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
-import { getGlobalState, setGlobalState } from "../GlobalState";
-
-var EMAIL_VERIFICATION_RE = /\S+@\S+\.\S+/;
+import { setGlobalState } from "../GlobalState";
 
 class Login extends React.Component {
   constructor() {
@@ -28,17 +24,6 @@ class Login extends React.Component {
     };
 
     this.checkUser = this.checkUser.bind(this);
-  }
-
-  componentDidMount() {
-    this.props.navigation.setOptions({
-      headerRight: (props) => (
-        <Text style={{ fontSize: 16 }}>
-          <Feather name="user" size={24} color="black" />
-          User: {getGlobalState("username")}
-        </Text>
-      ),
-    });
   }
 
   checkUser() {
@@ -84,7 +69,7 @@ class Login extends React.Component {
   }
 
   validateEmail(email) {
-    let error = EMAIL_VERIFICATION_RE.test(email) || email === "";
+    let error = CONSTANTS.EMAIL_VERIFICATION_RE.test(email) || email === "";
     if (this.state.emailInputError !== !error) {
       this.setState({ emailInputError: !error });
     }
@@ -137,7 +122,7 @@ class Login extends React.Component {
                   </HelperText>
 
                   <TextInput
-                    style={{ marginTop: 1, marginBottom: 10 }}
+                    style={{ marginBottom: 20 }}
                     label="Password"
                     value={this.state.password}
                     onChangeText={(text) => this.setState({ password: text })}
@@ -172,18 +157,30 @@ class Login extends React.Component {
                     secureTextEntry={!this.state.showPassword}
                   />
 
-                  <View style={{ marginTop: 1 }}>
+                  <View style={{ marginHorizontal: 5 }}>
                     <Button
                       mode="contained"
                       color="#2196f3"
                       onPress={this.checkUser}
+                      style={{ borderRadius: 10}}
                     >
                       Submit
                     </Button>
                   </View>
+
+                  <Text style={{ textAlign: "center", color: "#009DDC", marginTop: 20, fontSize: 14 }} onPress={() => this.props.navigation.navigate("Change Password")}>
+                    Forgot Your Password?
+                  </Text>
+                  
                 </View>
               </KeyboardAwareScrollView>
             </View>
+          </View>
+          
+          <View>
+            <Text style={{ textAlign: "center", fontSize: 12 }}>
+              Don't have an account? <Text style={{ color: "#009DDC" }} onPress={() => this.props.navigation.navigate("Sign Up")}>Sign Up</Text>
+            </Text>
           </View>
         </View>
       </View>
