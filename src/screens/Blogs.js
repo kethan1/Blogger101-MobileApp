@@ -1,7 +1,6 @@
 import * as React from "react";
 import {
   View,
-  Text,
   FlatList,
   Dimensions,
   TouchableOpacity,
@@ -9,7 +8,6 @@ import {
   RefreshControl,
 } from "react-native";
 
-import { Feather } from "@expo/vector-icons";
 import { Snackbar, Card, Title } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
 

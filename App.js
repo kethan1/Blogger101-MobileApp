@@ -25,6 +25,7 @@ import EmailVerification from "./src/screens/EmailVerification";
 import ChangePasswordEmailSent from "./src/screens/ChangePasswordEmailSent";
 import ChangePassword from "./src/screens/ChangePassword";
 import ChangePasswordLink from "./src/screens/ChangePasswordLink";
+import MyBlogs from "./src/screens/MyBlogs";
 
 import { getGlobalState, setGlobalState } from "./src/GlobalState";
 
@@ -71,6 +72,8 @@ function getTabBarIcon(route) {
       return <Feather name="user-plus" size={size} color={color} />;
     } else if (route.name === "Logout") {
       return <SimpleLineIcons name="logout" size={size} color={color} />;
+    } else if (route.name === "My Blogs") {
+      return <Feather name="folder" size={size} color={color} />;
     }
   };
 }
@@ -110,6 +113,25 @@ function LoggedInTabNavigator() {
         options={{
           headerLeft: (props) => (
             <Entypo name="new-message" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
+      <LoggedInTab.Screen
+        name="My Blogs"
+        component={MyBlogs}
+        initialParams={{ message: "" }}
+        options={{
+          headerLeft: (props) => (
+            <Feather name="folder" size={26} color="black" />
           ),
           headerRight: (props) => (
             <Text style={{ fontSize: 16 }}>
