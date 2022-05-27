@@ -18,8 +18,8 @@ class PostBlog extends React.Component {
     this.state = {
       entries: [],
       ScreenHeight: Dimensions.get("window").height,
-      blogContent: "test test test test",
-      blogTitle: "test 1 2 3",
+      blogContent: "",
+      blogTitle: "",
       uploadedFile: null,
       imageUri: null,
     };
