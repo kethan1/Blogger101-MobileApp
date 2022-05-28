@@ -88,6 +88,8 @@ class EditBlog extends React.Component {
 
           <TextInput
             style={{ marginBottom: 10 }}
+            autoComplete="off"
+            autoCorrect={false}
             label="Blog Content"
             value={this.state.blogContent}
             onChangeText={(text) => this.setState({ blogContent: text })}
