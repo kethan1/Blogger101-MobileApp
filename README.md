@@ -4,7 +4,7 @@ This is the mobile app for Blogger101!
 
 Blogger101's Website: https://blogger-101.herokuapp.com  
 Blogger101's Website's Github: https://github.com/kethan1/blogger101-website  
-Link to Expo Snack: https://snack.expo.io/@ketzoomer/blogger101-mobile-app-snack
+Link to Expo Snack: https://snack.expo.dev/@git/github.com/kethan1/Blogger101-MobileApp
 
 Built using: [React Native](https://reactnative.dev/), [Expo](https://expo.dev/), and other community made packages.
 
