@@ -9,11 +9,11 @@ import { TextInput } from "react-native-paper";
 
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
-import SetHeader from "../SetHeaderUser";
+import { SetHeader } from "../NavigationHelperFuncs";
 import { getGlobalState } from "../GlobalState";
 
 
-class Blog_Info extends React.Component {
+class BlogInfo extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -223,5 +223,5 @@ export default function (props) {
   const route = useRoute();
   const navigation = useNavigation();
 
-  return <Blog_Info route={route} navigation={navigation} />;
+  return <BlogInfo route={route} navigation={navigation} />;
 }

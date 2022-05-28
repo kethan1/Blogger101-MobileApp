@@ -11,7 +11,7 @@ import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
 
 
-class Sign_Up extends React.Component {
+class SignUp extends React.Component {
   constructor() {
     super();
 
@@ -302,5 +302,5 @@ class Sign_Up extends React.Component {
 export default function (props) {
   const navigation = useNavigation();
 
-  return <Sign_Up navigation={navigation} />;
+  return <SignUp navigation={navigation} />;
 }

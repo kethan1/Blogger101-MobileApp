@@ -14,7 +14,7 @@ import { Snackbar, Card, Title, Provider, Portal, Dialog, Button, Paragraph } fr
 import { useRoute, useNavigation } from "@react-navigation/native";
 
 import styles from "../styles/stylesheet_main";
-import SetHeader from "../SetHeaderUser";
+import { SetHeader, OnNavigation } from "../NavigationHelperFuncs";
 import CONSTANTS from "../Constants";
 import { getGlobalState } from "../GlobalState";
 
@@ -89,8 +89,8 @@ class MyBlogs extends React.Component {
 
   deleteBlog() {
     fetch(`${CONSTANTS.SERVER_URL}/api/v1/delete-blog?` + new URLSearchParams({
-        user: getGlobalState("username"),
-        title: this.state.blogToDeleteTitle,
+      user: getGlobalState("username"),
+      title: this.state.blogToDeleteTitle,
     })).then(() => {
       this.setState({ dialogVisible: false, snackbarMessage: "Blog Deleted" });
       this.refreshBlogs();
@@ -121,25 +121,28 @@ class MyBlogs extends React.Component {
 
     return (
       <Provider>
+        {snackbar}
+        <SetHeader
+          navigation={this.props.navigation}
+          getGlobalState={getGlobalState}
+        />
+
+        <OnNavigation
+          func={this.refreshBlogs}
+        />
         <Portal>
-        <Dialog visible={this.state.dialogVisible} onDismiss={() => this.setState({dialogVisible: false})}>
+          <Dialog visible={this.state.dialogVisible} onDismiss={() => this.setState({ dialogVisible: false })}>
             <Dialog.Title>Do You Want to Delete <Text style={{ textDecorationLine: "underline" }}>{this.state.blogToDeleteTitle}</Text>?</Dialog.Title>
             <Dialog.Content>
               <Paragraph>This action is irreversable. Are you sure you want to delete <Text style={{ textDecorationLine: "underline" }}>{this.state.blogToDeleteTitle}</Text>?</Paragraph>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={() => this.setState({dialogVisible: false})}>Cancel</Button>
+              <Button onPress={() => this.setState({ dialogVisible: false })}>Cancel</Button>
               <Button onPress={this.deleteBlog}>Delete</Button>
             </Dialog.Actions>
           </Dialog>
         </Portal>
         <View>
-          {snackbar}
-          <SetHeader
-            navigation={this.props.navigation}
-            getGlobalState={getGlobalState}
-          />
-
           <View style={{ height: this.state.screenHeight - 100, marginTop: 15 }}>
             <View style={[styles.container]}>
               <FlatList
@@ -170,7 +173,12 @@ class MyBlogs extends React.Component {
                             }}
                           >
                             <Title>{item.title}</Title>
-                            <Text style={{ color: "#009DDC" }}>
+                            <Text onPress={() => {
+                              this.props.navigation.navigate("Edit Blog", {
+                                blogTitle: item.title,
+                                blogContent: item.text,
+                              });
+                            }} style={{ color: "#009DDC" }}>
                               <Feather name="edit-2" size={13} color="#009DDC" />Edit This Blog
                             </Text>
                             <Text onPress={() => this.setState({ dialogVisible: true, blogToDeleteTitle: item.title })} style={{ color: "#de2720" }}>

@@ -3,7 +3,7 @@ import { Text } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 
-export default function SetHeader({ navigation, getGlobalState }) {
+export function SetHeader({ navigation, getGlobalState }) {
   useFocusEffect(
     React.useCallback(() => {
       navigation.setOptions({
@@ -17,6 +17,17 @@ export default function SetHeader({ navigation, getGlobalState }) {
 
       return () => null;
     }, [navigation, getGlobalState])
+  );
+
+  return null;
+}
+
+export function OnNavigation({ func }) {
+  useFocusEffect(
+    React.useCallback(() => {
+      func();
+      return () => null;
+    }, [func])
   );
 
   return null;

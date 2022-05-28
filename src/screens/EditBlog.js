@@ -1,18 +1,17 @@
 import * as React from "react";
-import { Text, Dimensions, Image, SafeAreaView, ScrollView } from "react-native";
+import { Text, Dimensions, SafeAreaView, ScrollView } from "react-native";
 
-import { Entypo, MaterialIcons, Feather } from "@expo/vector-icons";
-import * as ImagePicker from "expo-image-picker";
-import { useNavigation } from "@react-navigation/native";
+import { Entypo, MaterialIcons } from "@expo/vector-icons";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import Markdown from "react-native-markdown-display";
 import { Button, TextInput } from "react-native-paper";
 
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
-import SetHeader from "../NavigationHelperFuncs";
+import { SetHeader, OnNavigation } from "../NavigationHelperFuncs";
 import { getGlobalState } from "../GlobalState";
 
-class PostBlog extends React.Component {
+class EditBlog extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,38 +19,18 @@ class PostBlog extends React.Component {
       ScreenHeight: Dimensions.get("window").height,
       blogContent: "",
       blogTitle: "",
-      uploadedFile: null,
-      imageUri: null,
     };
 
-    this.pickDocument = this.pickDocument.bind(this);
-    this.postBlog = this.postBlog.bind(this);
+    this.updateBlog = this.updateBlog.bind(this);
+    this.getBlogInfo = this.getBlogInfo.bind(this);
   }
 
-  async pickDocument() {
-    let uploadedFile = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!uploadedFile.cancelled) {
-      var uri = uploadedFile.uri;
-      this.setState({ uploadedFile: uploadedFile });
-      this.setState({ imageUri: uri });
-    }
+  getBlogInfo() {
+    this.setState({ blogTitle: this.props.route.params.blogTitle });
+    this.setState({ blogContent: this.props.route.params.blogContent });
   }
 
-  async postBlog() {
-    var blogFormData = new FormData();
-    blogFormData.append("title", this.state.blogTitle);
-    blogFormData.append("blog_content", this.state.blogContent);
-    blogFormData.append("user", getGlobalState("username"));
-    var uri = this.state.imageUri;
-    if (uri === null) {
-      alert("Please select an image");
-      return;
-    }
+  updateBlog() {
     if (this.state.blogTitle.length < 5) {
       alert("Please enter a longer title");
       return;
@@ -61,23 +40,23 @@ class PostBlog extends React.Component {
       return;
     }
 
-    var splitUri = uri.split(".");
-    var fileType = splitUri[splitUri.length - 1];
-    blogFormData.append("file", {
-      uri,
-      type: `image/${fileType}`,
-      name: `image.${fileType}`,
-    });
-
-    fetch(`${CONSTANTS.SERVER_URL}/api/v1/post-blog`, {
+    fetch(`${CONSTANTS.SERVER_URL}/api/v1/update-blog`, {
       method: "POST",
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "application/json",
       },
-      body: blogFormData,
+      body: JSON.stringify({
+        "title": this.state.blogTitle,
+        "old_title": this.props.route.params.blogTitle,
+        "blog_content": this.state.blogContent,
+        "user": getGlobalState("username"),
+      }),
     });
-    this.props.navigation.navigate("Blogs", {
-      message: "Successfully Posted Blog",
+    this.props.navigation.navigate("LoggedIn", {
+      screen: "My Blogs",
+      props: {
+        message: "Successfully Edited Blog",
+      }
     });
   }
 
@@ -87,6 +66,10 @@ class PostBlog extends React.Component {
         <SetHeader
           navigation={this.props.navigation}
           getGlobalState={getGlobalState}
+        />
+
+        <OnNavigation
+          func={this.getBlogInfo}
         />
 
         <ScrollView style={{ width: "90%" }}>
@@ -102,7 +85,7 @@ class PostBlog extends React.Component {
             activeUnderlineColor="#2196f3"
             selectionColor="#2196f3"
           />
-          
+
           <TextInput
             style={{ marginBottom: 10 }}
             label="Blog Content"
@@ -122,19 +105,13 @@ class PostBlog extends React.Component {
           <Markdown style={{ body: { fontSize: 16 } }}>
             {this.state.blogContent}
           </Markdown>
-          <Button color="#2196f3" tintColor="white" onPress={this.pickDocument}>
-            <Feather name="file-plus" size={20} color="black" />Upload Image
-          </Button>
-          {
-            this.state.imageUri !== null && <Image source={{ uri: this.state.imageUri }} style={{ width: 200, height: 200, alignSelf: "center", marginBottom: 15, marginTop: 5 }} />
-          }
           <Button
             style={{ marginHorizontal: "3%", marginBottom: "3%", borderRadius: 10 }}
             mode="contained"
             color="#2196f3"
-            onPress={this.postBlog}
+            onPress={this.updateBlog}
           >
-            Post Blog
+            Update Blog
           </Button>
         </ScrollView>
       </SafeAreaView>
@@ -143,7 +120,8 @@ class PostBlog extends React.Component {
 }
 
 export default function (props) {
+  const route = useRoute();
   const navigation = useNavigation();
 
-  return <PostBlog navigation={navigation} />;
+  return <EditBlog route={route} navigation={navigation} />;
 }

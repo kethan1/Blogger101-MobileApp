@@ -12,7 +12,7 @@ import { Snackbar, Card, Title } from "react-native-paper";
 import { useRoute, useNavigation } from "@react-navigation/native";
 
 import styles from "../styles/stylesheet_main";
-import SetHeader from "../SetHeaderUser";
+import { SetHeader, OnNavigation } from "../NavigationHelperFuncs";
 import CONSTANTS from "../Constants";
 import { getGlobalState } from "../GlobalState";
 
@@ -107,6 +107,10 @@ class Blogs extends React.Component {
         <SetHeader
           navigation={this.props.navigation}
           getGlobalState={getGlobalState}
+        />
+
+        <OnNavigation
+          func={this.refreshBlogs}
         />
 
         <View style={{ height: this.state.screenHeight - 100, marginTop: 15 }}>

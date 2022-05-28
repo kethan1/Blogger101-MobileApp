@@ -15,9 +15,9 @@ import * as SecureStore from "expo-secure-store";
 import * as Linking from "expo-linking";
 
 import Blogs from "./src/screens/Blogs";
-import Blog_Info from "./src/screens/BlogTemplate";
+import BlogInfo from "./src/screens/BlogTemplate";
 import Login from "./src/screens/Login";
-import Sign_Up from "./src/screens/SignUp";
+import SignUp from "./src/screens/SignUp";
 import Logout from "./src/screens/Logout";
 import PostBlog from "./src/screens/PostBlog";
 import EmailSent from "./src/screens/EmailSent";
@@ -26,6 +26,7 @@ import ChangePasswordEmailSent from "./src/screens/ChangePasswordEmailSent";
 import ChangePassword from "./src/screens/ChangePassword";
 import ChangePasswordLink from "./src/screens/ChangePasswordLink";
 import MyBlogs from "./src/screens/MyBlogs";
+import EditBlog from "./src/screens/EditBlog";
 
 import { getGlobalState, setGlobalState } from "./src/GlobalState";
 
@@ -82,7 +83,7 @@ function LoggedInTabNavigator() {
   return (
     <LoggedInTab.Navigator
       screenOptions={({ route }) => ({
-        tabBarButton: route.name === "Details" ? () => null : undefined,
+        tabBarButton: ["Details", "Edit Blog"].includes(route.name) ? () => null : undefined,
         tabBarIcon: getTabBarIcon(route),
         tabBarActiveTintColor: "tomato",
         tabBarInactiveTintColor: "gray",
@@ -148,10 +149,28 @@ function LoggedInTabNavigator() {
 
       <LoggedInTab.Screen
         name="Details"
-        component={Blog_Info}
+        component={BlogInfo}
         options={{
           headerLeft: (props) => (
             <Entypo name="text-document" size={26} color="black" />
+          ),
+          headerRight: (props) => (
+            <Text style={{ fontSize: 16 }}>
+              <Feather name="user" size={24} color="black" />
+              User: {getGlobalState("username")}
+            </Text>
+          ),
+          headerLeftContainerStyle: { paddingLeft: 10 },
+          headerRightContainerStyle: { paddingRight: 10 },
+        }}
+      />
+
+      <LoggedInTab.Screen
+        name="Edit Blog"
+        component={EditBlog}
+        options={{
+          headerLeft: (props) => (
+            <Feather name="edit" size={24} color="black" />
           ),
           headerRight: (props) => (
             <Text style={{ fontSize: 16 }}>
@@ -198,7 +217,7 @@ function LoggedOutTabNavigator() {
 
       <LoggedOutTab.Screen
         name="Sign Up"
-        component={Sign_Up}
+        component={SignUp}
         options={{
           headerLeft: (props) => (
             <Feather name="user-plus" size={20} color="black" />
@@ -234,7 +253,7 @@ function LoggedOutTabNavigator() {
 
       <LoggedOutTab.Screen
         name="Details"
-        component={Blog_Info}
+        component={BlogInfo}
         options={{
           headerLeft: (props) => (
             <Entypo name="text-document" size={26} color="black" />
