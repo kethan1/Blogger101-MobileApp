@@ -25,4 +25,4 @@ Then, run `npm start` in the project folder. The app is up and running!
 
 ### Changes to Code
 
-If you want to run this with a local copy of the Blogger101 website (for the API, instead of the actual API), download this repo: https://github.com/kethan1/blogger101-website. Follow the instructions in the README and get a local instance of the website up and running. Then, replace `SERVER_URL` in `src/assets/Globals.js` with `http://localhost:5000`. Then, run `npm start` in this repo's folder.
+If you want to run this with a local copy of the Blogger101 website (for the API, instead of the actual API), download this repo: https://github.com/kethan1/blogger101-website. Follow the instructions in the README and get a local instance of the website up and running. Then, replace `SERVER_URL` in `src/assets/Globals.js` with `http://localhost:5000`. Then, enter the adb command `adb reverse tcp:5000 tcp:5000`. After that, run `npm start` in this repo's folder.
