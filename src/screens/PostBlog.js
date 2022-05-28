@@ -9,7 +9,7 @@ import { Button, TextInput } from "react-native-paper";
 
 import styles from "../styles/stylesheet_main";
 import CONSTANTS from "../Constants";
-import SetHeader from "../NavigationHelperFuncs";
+import { SetHeader } from "../NavigationHelperFuncs";
 import { getGlobalState } from "../GlobalState";
 
 class PostBlog extends React.Component {
